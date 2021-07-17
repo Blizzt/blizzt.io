@@ -66,12 +66,6 @@ A Collection of useful React hooks.
 
 [Go To Documentation](https://github.com/streamich/react-use)
 
-### **React Redux**
-
-Redux helps you write applications that behave consistently, run in different environments (client, server, and native), and are easy to test.
-
-[Go To Documentation](https://redux.js.org/introduction/getting-started)
-
 ### **next-i18next**
 
 next-i18next is a plugin for Next.js projects that allows you to get translations up and running quickly and easily, while fully supporting SSR, multiple namespaces with codesplitting, etc.
