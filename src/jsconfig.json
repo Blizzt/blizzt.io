@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@redux/*": ["./redux/*"],
+      "@api/*": ["./shared/api/*"],
+      "@i18n/*": ["./shared/i18n/*"],
+      "@hooks/*": ["./shared/hooks/*"],
+      "@types/*": ["./shared/types/*"],
+      "@utils/*": ["./shared/utils/*"],
+      "@templates/*": ["./templates/*"],
+      "@assets/*": ["./shared/assets/*"],
+      "@layouts/*": ["./shared/layouts/*"],
+      "@contracts/*": ["./shared/contracts/*"],
+      "@fragments/*": ["./shared/fragments/*"],
+      "@containers/*": ["./shared/containers/*"],
+      "@components/*": ["./shared/components/*"],
+      "@styled-components/*": ["./shared/styled-components/*"],
+      "@forms-components/*": ["./shared/components/forms/components/*"]
+    }
+  }
+}
