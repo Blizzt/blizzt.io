@@ -68,6 +68,10 @@ function RewardsEditContainer({ project, handleNFTCreationSubmit }) {
     // router.push(`/projects/${project._id}/${collectible.nftId}`);
   }, []);
 
+  const onSubmitCollectible = useCallback(async(collectible, formikHelpers, actionButtonRef) => {
+    handleNFTCreationSubmit(collectible, formikHelpers, actionButtonRef, setMode);
+  }, [setMode]);
+
   /**
 	 * @name handleNFTCreationCancel
 	 * @description Discard NFT creation.
@@ -118,7 +122,7 @@ function RewardsEditContainer({ project, handleNFTCreationSubmit }) {
 					<PageMargin>
             <RewardsForm
               projectId={project._id}
-              onSubmit={handleNFTCreationSubmit}
+              onSubmit={onSubmitCollectible}
               onCancel={handleNFTCreationCancel}
             />
 					</PageMargin>

@@ -38,6 +38,7 @@ export const Container = styled(PageMargin)`
 	height: 100%;
 	grid-template-columns: 0fr 1fr 0fr;
   grid-column-gap: 22px;
+  position: relative;
 `;
 
 export const Branding = styled.div`
@@ -76,42 +77,77 @@ export const Navigator = styled.div`
   white-space: nowrap;
 `;
 
+export const Menu = styled.div`
+  position: absolute;
+  top: 80px;
+  left: 0;
+  transition: all 0.2s ease-in-out;
+
+  &:before {
+    content: "";
+    left: 0;
+    right: 0;
+    top: -24px;
+    height: 24px;
+    position: absolute;
+  }
+`;
+
 export const Item = styled.div`
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	border-bottom: 4px solid transparent;
-	position: relative;
-  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   color: ${common.colors.BLACK};
   font-family: ${common.fonts.BOLD};
-  font-size: 14px;
   padding: 0 22px;
-  
+
   cursor: pointer;
   user-select: none;
+  
+  &.with-menu-wrapper {
+    
+    ${Menu} {
+      opacity: 0;
+      visibility: hidden;
+      transform: rotateX(-15deg);
+      transition: all 250ms;
+    }
+    
+    &:hover {
+      > span > svg {
+        fill: ${common.colors.PRIMARY};
+        color: ${common.colors.PRIMARY};
+      }
+      
+      background: ${common.colors.PRIMARY_LIGHT};
+      box-shadow: inset 0 -5px 0px -2px ${common.colors.PRIMARY};
+      color: ${common.colors.PRIMARY};
+      
+      ${Menu} {
+        opacity: 1;
+        visibility: visible;
+        transform: rotateX(0deg);
+        transform-origin: 50% -50px;
+      }
+    }
+  }
 
   &.selected {
-		color: ${common.colors.PRIMARY};
-    border-bottom-color: ${common.colors.PRIMARY};
-	}
+    color: ${common.colors.PRIMARY};
+  }
 
   ${props => isConditional(props.hot, `
   	&.selected {
   		color: ${common.colors.PRIMARY};
-			border-bottom-color: ${common.colors.PRIMARY};
   	}
 	`)}
-	
-	${props => isConditional(props.special, `
-		color: ${common.colors.PRIMARY};
-		background-color: ${common.colors.PRIMARY_LIGHT};
-		border-top: 4px solid ${common.colors.PRIMARY};
-		
-		&.selected {
-			color: ${common.colors.PRIMARY};
-			border-bottom-color: transparent;
-  	}
+  
+  ${props => isConditional(props.special, `
+		color: #685180;
+    background: linear-gradient(135deg, #357ae0 0%, #b537cb 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 	`)}
 `;
 
@@ -119,4 +155,11 @@ export const HotItem = styled.img`
   width: 22px;
   height: 22px;
   margin-left: 6px;
+`;
+
+export const ItemText = styled.span`
+  padding-left: 12px;
+  font-family: "Inter Bold", sans-serif;
+  text-transform: uppercase;
+  font-size: 12px;
 `;

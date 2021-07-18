@@ -2,6 +2,12 @@
 import React from 'react';
 import Link from 'next/link';
 
+// Assets
+import {
+  CompassOutline,
+  AddOutline
+} from 'react-ionicons';
+
 // Styled Components
 import {
   Layout,
@@ -14,13 +20,16 @@ import {
   Container,
   Left,
   Right,
-  Center
+  Center,
+  ItemText,
+  Menu
 
 } from './styles';
 
 // Components
 import Account from '@components/navigation/Account';
 import SearchInput from '@components/navigation/SearchInput';
+import DiscoverMenu from '@components/navigation/DiscoverMenu';
 
 // Hooks
 import useEagerConnect from '@hooks/useEagerConnect';
@@ -29,6 +38,7 @@ import useEagerConnect from '@hooks/useEagerConnect';
 import Logo from '@assets/images/blizzt-logo-square.svg';
 
 function Header() {
+  // Web3
   const triedToEagerConnect = useEagerConnect();
 
   return (
@@ -40,12 +50,19 @@ function Header() {
               <ImageSource src={Logo} alt={'Blizzt Finance - NFT Crowdfunding'} />
             </Branding>
           </Link>
-          <Navigator count={2}>
-            <Link href={'/'}>
-              <Item>
+          <Navigator count={1}>
+            <Item className={'with-menu-wrapper'}>
+              <CompassOutline
+                width={'24px'}
+                height={'24px'}
+              />
+              <ItemText>
                 Discover
-              </Item>
-            </Link>
+              </ItemText>
+              <Menu>
+                <DiscoverMenu />
+              </Menu>
+            </Item>
           </Navigator>
         </Left>
         <Center>
@@ -55,7 +72,14 @@ function Header() {
           <Navigator count={2}>
             <Link href={'/projects/create'}>
               <Item special={true}>
-                Start Project
+                <AddOutline
+                  width={'24px'}
+                  height={'24px'}
+                  color={'#357ae0'}
+                />
+                <ItemText>
+                  Add Project
+                </ItemText>
               </Item>
             </Link>
           </Navigator>

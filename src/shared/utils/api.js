@@ -1,6 +1,7 @@
 // Dependencies
 import axios from 'axios';
-import { chainsTypeId } from '@types/web3';
+
+import { getCookie } from '@utils/storage';
 
 export const getQuery = (limit, page) =>
   `limit=${limit}&offset=${page ? page * limit : 0}`;
@@ -21,9 +22,17 @@ const parseFormData = (data, attachment) => {
 export function fetcherAPI(path) {
   return new Promise(async(resolve, reject) => {
     const baseURL = `http://127.0.0.1:5000${path}`;
+    const userAddress = getCookie(null, 'userAddress');
+    const userChainId = getCookie(null, 'userChainId');
+
+    const credentials = {
+      userAddress,
+      userChainId
+    };
 
     const headers = {
-      Accept: 'application/json'
+      Accept: 'application/json',
+      Credentials: JSON.stringify(credentials)
     };
 
     const data = {};
@@ -54,14 +63,17 @@ export default function fetchAPI({
   method,
   endPoint,
   body = {},
-  attachment = null,
-  credentials = {
-    userAddress: '',
-    userChainId: chainsTypeId.RINKEBY
-  }
+  attachment = null
 }) {
   return new Promise(async(resolve, reject) => {
     const baseURL = `http://127.0.0.1:5000${endPoint}`;
+    const userAddress = getCookie(null, 'userAddress');
+    const userChainId = getCookie(null, 'userChainId');
+
+    const credentials = {
+      userAddress,
+      userChainId
+    };
 
     let headers = {
       Accept: 'application/json',

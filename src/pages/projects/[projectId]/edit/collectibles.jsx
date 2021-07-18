@@ -9,14 +9,19 @@ import EditMyProjectTemplate from '@templates/projects/ProjectEdit';
 
 // Components
 import SectionTitle from '@components/titles/SectionTitle';
-import RewardsEditContainer from '@containers/RewardsEditContainer';
+import RewardsEditContainer, { modeTypesId } from '@containers/RewardsEditContainer';
 
 // API
 import ProjectAPI from '@api/project';
 import CollectibleAPI from '@api/collectible';
 
+// Hooks
+import { useTheme } from '@styled-components/index';
+import { modalTypesId } from '@types/ui';
+
 function EditMyProjectCollectibles(props) {
   // Hooks
+  const { openModal, closeModal } = useTheme();
   const router = useRouter();
   const { projectId } = router.query;
   const { chainId, account } = useWeb3React();
@@ -24,13 +29,15 @@ function EditMyProjectCollectibles(props) {
   // Project Data
   const { data: project = null } = useSWR(`/projects/${projectId}`, { initialData: props.project });
 
-  const handleNFTCreationSubmit = useCallback(async(collectible, formikHelpers, actionButtonRef) => {
-    // openModal(modalTypesId.CREATE_MY_COLLECTIBLE_PROCESS)
+  const handleNFTCreationSubmit = useCallback(async(collectible, formikHelpers, actionButtonRef, setMode) => {
+    await openModal(modalTypesId.CREATE_MY_COLLECTIBLE_PROCESS);
     await CollectibleAPI.create({
       chainId,
       projectId,
       collectible
     });
+    await closeModal();
+    await setMode(modeTypesId.VIEWING_MODE);
   }, [chainId, account, projectId]);
 
   if (!project) {

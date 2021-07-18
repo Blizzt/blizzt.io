@@ -16,7 +16,7 @@ import NFTCollectionFactory from '@contracts/abis/NFTCollectionFactory.json';
 
 const CollectibleAPI = {
   create: async({ chainId, projectId, collectible }) => {
-    const web3 = new Web3();
+    const web3 = new Web3(window.ethereum);
     const { statusCode, data: project } = await ProjectAPI.getById(projectId);
 
     if (statusCode !== 200 || !project) {
@@ -82,7 +82,7 @@ const CollectibleAPI = {
       }
 
       // Calculate the Id for the new NFT
-      nftId = ntfsResponse.result.length + 1;
+      nftId = ntfsResponse.data.length + 1;
 
       // Mint the collectibles collectibles
       const {
@@ -91,12 +91,10 @@ const CollectibleAPI = {
         }
       } = new web3.eth.Contract(NFTCollection, project.nftCollectionAddress);
 
-      const mintItem = await mint(window.ethereum.selectedAddress, nftId, amount, metadataCidIpfs);
+      const mintItem = await mint(window.ethereum.selectedAddress, nftId, collectible.amount, metadataCidIpfs);
       const tx = await mintItem.send({
         from: window.ethereum.selectedAddress
       });
-
-      console.log(tx);
 
       nftAddress = project.nftCollectionAddress;
     } else {
@@ -145,7 +143,7 @@ const CollectibleAPI = {
     }
 
     return await fetchAPI({
-      endPoint: '/nft',
+      endPoint: '/nfts',
       method: 'POST',
       body: {
         nftCollectionAddress: nftAddress,
