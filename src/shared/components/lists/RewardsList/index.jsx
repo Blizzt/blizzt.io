@@ -14,12 +14,12 @@ import NFTCard from '../../cards/NFTCard';
 function RewardsList({ onClick = () => {}, collectibles = [] }) {
   const renderCollectiblesList = useMemo(() => (
 		<List>
-			{collectibles.map((item, index) => (
+			{collectibles.map(({ metadata: { name, description, image }, ...item }, index) => (
 				<NFTCard
 					key={`--nft-item-${index.toString()}`}
-					pictureUrl={item.image}
-					title={item.name}
-					description={item.description}
+					pictureUrl={image}
+					title={name}
+					description={description}
 					forSale={item.forSale}
 					forRent={item.forRent}
 					units={item.mintedAmount}

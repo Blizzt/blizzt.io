@@ -115,7 +115,6 @@ function DiscoverMenu({ visible }, ref) {
 
   useEffect(() => {
     if (boxView && boxView.current) {
-      console.log(boxView.current);
       setBoxWidth(prevState => ({
         current: prevState.next,
         next: boxView.current.clientWidth

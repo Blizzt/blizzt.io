@@ -1,5 +1,5 @@
 // Dependencies
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import useSWR from 'swr';
 import { useRouter } from 'next/router';
 import { useWeb3React } from '@web3-react/core';
@@ -28,6 +28,7 @@ function EditMyProjectCollectibles(props) {
 
   // Project Data
   const { data: project = null } = useSWR(`/projects/${projectId}`, { initialData: props.project });
+  const { data: collectibles } = useSWR(null, ProjectAPI.getCollectibles(project.nftCollectionAddress));
 
   const handleNFTCreationSubmit = useCallback(async(collectible, formikHelpers, actionButtonRef, setMode) => {
     await openModal(modalTypesId.CREATE_MY_COLLECTIBLE_PROCESS);
@@ -54,6 +55,7 @@ function EditMyProjectCollectibles(props) {
         description={'Offer simple, meaningful ways to bring backers closer to your project and celebrate it coming to life.'}>
         <RewardsEditContainer
           project={project}
+          collectibles={collectibles}
           handleNFTCreationSubmit={handleNFTCreationSubmit}
         />
       </SectionTitle>
@@ -63,6 +65,7 @@ function EditMyProjectCollectibles(props) {
 
 export async function getServerSideProps({ params: { projectId } }) {
   const { data: project } = await ProjectAPI.getById(projectId);
+
   return {
     props: {
       project

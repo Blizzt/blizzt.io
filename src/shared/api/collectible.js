@@ -142,13 +142,16 @@ const CollectibleAPI = {
       nftAddress = tokenAddress;
     }
 
+    const ipfsAddress = `ipfs://${metadataCidIpfs}`;
+
     return await fetchAPI({
       endPoint: '/nfts',
       method: 'POST',
       body: {
         nftCollectionAddress: nftAddress,
         nftId,
-        metadata,
+        ipfsAddress,
+        metadata: JSON.stringify(metadata),
         mintedAmount: collectible.amount
       }
     });

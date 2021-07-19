@@ -1,5 +1,7 @@
 // Dependencies
 import fetchAPI from '@utils/api';
+import { normalizeState, unNormalizeState } from '@utils/parsers';
+import { IPFS } from '@utils/web3';
 
 const ProjectAPI = {
   /**
@@ -54,6 +56,41 @@ const ProjectAPI = {
         signature: signature
       }
     });
+  },
+
+  getCollectibles: async(nftCollectionAddress) => {
+    const response = await fetchAPI({
+      endPoint: `/nfts/${nftCollectionAddress}/ids`,
+      method: 'GET'
+    });
+
+    if (response && response.statusCode === 200) {
+      const { data } = response;
+
+      // Obtain NFT ids to get metadata from IFPS
+      const ids = data.map(function(item) {
+        return {
+          nftId: Number(item.nftId),
+          metadata: item.metadata
+        };
+      });
+
+      const collectibles = {};
+
+      // TODO: Jorge, esto debería volver los metadatos de IPFS.
+      await Promise.all(
+        ids.map(async(collectible) => {
+          const data = await IPFS.get(collectible.nftId); // TODO: Esto devuelve un generador "suspended"
+
+          collectibles[collectible.nftId] = {
+            id: collectible.nftId,
+            ...data
+          };
+        })
+      );
+
+      console.log({ ids, collectibles });
+    }
   }
 };
 

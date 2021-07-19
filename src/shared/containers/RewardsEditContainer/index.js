@@ -29,7 +29,7 @@ export const modeTypesId = {
   VIEWING_MODE: 'viewing-mode'
 };
 
-function RewardsEditContainer({ project, handleNFTCreationSubmit }) {
+function RewardsEditContainer({ project, collectibles = [], handleNFTCreationSubmit }) {
   // Refs
   const creationForm = useRef(null);
 
@@ -113,7 +113,7 @@ function RewardsEditContainer({ project, handleNFTCreationSubmit }) {
           </Header>
           <RewardsList
             onClick={onClickCollectible}
-            collectibles={project.collectibles}
+            collectibles={collectibles}
           />
         </ListContainer>
       </PageMargin>
