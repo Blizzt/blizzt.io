@@ -1,6 +1,8 @@
 // Dependencies
 import fetchAPI from '@utils/api';
-import { normalizeState, unNormalizeState } from '@utils/parsers';
+
+// Utils
+import errorHandler from '@utils/errorHandler';
 import { IPFS } from '@utils/web3';
 
 const ProjectAPI = {
@@ -80,7 +82,8 @@ const ProjectAPI = {
       // TODO: Jorge, esto debería volver los metadatos de IPFS.
       await Promise.all(
         ids.map(async(collectible) => {
-          const data = await IPFS.get(collectible.nftId); // TODO: Esto devuelve un generador "suspended"
+          const meta = JSON.stringify(collectible.metadata);
+          const data = await IPFS.get(meta); // TODO: Esto devuelve un generador "suspended"
 
           collectibles[collectible.nftId] = {
             id: collectible.nftId,
@@ -91,6 +94,50 @@ const ProjectAPI = {
 
       console.log({ ids, collectibles });
     }
+  },
+
+  getCollectibleById: async(nftCollectionAddress, collectibleId) => {
+    try {
+      let collectible = {};
+
+      const response = await fetchAPI({
+        endPoint: `/nfts/${nftCollectionAddress}/${collectibleId}`,
+        method: 'GET'
+      });
+
+      if (response && response.statusCode === 200) {
+        const data = response.data[0];
+
+        collectible = {
+          id: data.nftId,
+          ...data.metadata,
+          mintedAmount: data.mintedAmount
+        };
+
+        const transactions = await ProjectAPI.getCollectibleTransactionById(nftCollectionAddress, collectibleId);
+
+        if (transactions && transactions.statusCode === 200) {
+          const { forSale, forRent } = transactions.data;
+          collectible = {
+            ...collectible,
+            forSale,
+            forRent
+          };
+
+          return {
+            data: collectible
+          };
+        }
+      }
+    } catch (e) {
+      return errorHandler(e.code);
+    }
+  },
+
+  getCollectibleTransactionById: async(nftCollectionAddress, collectibleId) => {
+    return await fetchAPI({
+      endPoint: `/nftactions/${nftCollectionAddress}/${collectibleId}`
+    });
   }
 };
 

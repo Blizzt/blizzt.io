@@ -18,6 +18,7 @@ import AppLayout from '@layouts/AppLayout';
 import '@styled-components/platform-base.css';
 import '@uiw/react-md-editor/dist/markdown-editor.css';
 import '@uiw/react-markdown-preview/dist/markdown.css';
+import 'react-multi-carousel/lib/styles.css';
 
 // FetchAPI
 import { fetcherAPI } from '@utils/api';

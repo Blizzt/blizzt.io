@@ -5,13 +5,13 @@ import { isConditional } from '@styled-components/functions';
 import { animated } from 'react-spring';
 
 export const Layout = styled(animated.div)`
-  background: white;
+  background: #ffffffe6;
   box-shadow: 0 0 6px 0 #676f7745;
   border-radius: 8px;
   cursor: default;
   z-index: 10;
   overflow: hidden;
-  
+  backdrop-filter: blur(10px);
 `;
 
 export const Flex = styled.div`
@@ -32,7 +32,6 @@ export const Item = styled.li`
   transition: all 0.1s ease-in-out;
   
   ${props => isConditional(props.selected, `
-    background: #edf0f3;
     border-radius: 5px;
     color: ${common.colors.PRIMARY};
     

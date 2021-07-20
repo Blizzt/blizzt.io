@@ -18,12 +18,11 @@ export const BackDrop = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	
+  	
   @media screen and (min-width: 0px) and (max-width: ${common.sizing.MAX_MOBILE_WIDTH}px) {
     display: flex;
     flex-grow: 1;
   }
-	
 `;
 
 /**

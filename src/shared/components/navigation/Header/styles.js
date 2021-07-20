@@ -81,7 +81,9 @@ export const Menu = styled.div`
   position: absolute;
   top: 80px;
   left: 0;
-  transition: all 0.2s ease-in-out;
+  transition: all 250ms ease-in-out;
+  opacity: 0;
+  visibility: hidden;
 
   &:before {
     content: "";
@@ -111,10 +113,10 @@ export const Item = styled.div`
       opacity: 0;
       visibility: hidden;
       transform: rotateX(-15deg);
-      transition: all 250ms;
     }
     
     &:hover {
+      
       > span > svg {
         fill: ${common.colors.PRIMARY};
         color: ${common.colors.PRIMARY};

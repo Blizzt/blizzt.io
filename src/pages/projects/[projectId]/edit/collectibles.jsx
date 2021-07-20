@@ -21,9 +21,10 @@ import { modalTypesId } from '@types/ui';
 
 function EditMyProjectCollectibles(props) {
   // Hooks
-  const { openModal, closeModal } = useTheme();
   const router = useRouter();
   const { projectId } = router.query;
+
+  const { openModal, closeModal } = useTheme();
   const { chainId, account } = useWeb3React();
 
   // Project Data

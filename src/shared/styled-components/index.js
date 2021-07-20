@@ -19,21 +19,7 @@ export const ThemeContext = React.createContext({
 });
 
 export const useTheme = () => {
-  const {
-    theme,
-    modal,
-    toggle,
-    openModal,
-    closeModal
-  } = React.useContext(ThemeContext);
-  return {
-    theme,
-    modal,
-    toggle,
-    openModal,
-    closeModal,
-    themeName: theme
-  };
+  return React.useContext(ThemeContext); ;
 };
 
 export const StyledThemeProvider = ({ children }) => {
@@ -65,6 +51,7 @@ export const StyledThemeProvider = ({ children }) => {
       toggle,
       openModal,
       closeModal
+
     }),
     [toggle, openModal, closeModal, modal, theme]
   );
