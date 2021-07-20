@@ -7,7 +7,7 @@ import PageLayout from '@layouts/PageLayout';
 // Components
 import Gallery from '@components/exhibitors/Gallery';
 import HorizontalGallery from '@components/exhibitors/HorizontalGallery';
-import ProjectCard from '@components/cards/ProjectCard';
+import GameCard from '@components/cards/GameCard';
 
 // Styled Components
 import {
@@ -30,16 +30,13 @@ function MainTemplate({ title, latestProjects = [] }) {
         <Container>
           <div style={{ height: '4rem' }} />
           <HorizontalGallery
+            title={'Latest Released'}
             data={latestProjects}
             renderItem={(project) => (
-              <ProjectCard
+              <GameCard
                 name={project.name}
-                photo={project.photo}
                 categoryId={project.categoryId}
-                description={project.description}
-                collectiblesCount={project.collectiblesCount}
-                collectiblesSold={project.collectiblesSold}
-                path={`/projects/${project._id}`}
+                pictureUrl={project.photo}
               />
             )}
           />
