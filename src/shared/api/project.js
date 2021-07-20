@@ -68,6 +68,7 @@ const ProjectAPI = {
 
     if (response && response.statusCode === 200) {
       const { data } = response;
+      console.log('RESPONSE', response);
 
       // Obtain NFT ids to get metadata from IFPS
       const ids = data.map(function(item) {
@@ -82,7 +83,8 @@ const ProjectAPI = {
       // TODO: Jorge, esto debería volver los metadatos de IPFS.
       await Promise.all(
         ids.map(async(collectible) => {
-          const meta = JSON.stringify(collectible.metadata);
+          console.log('COLLECTIBLES',collectible);
+          const meta = collectible.metadata;
           const data = await IPFS.get(meta); // TODO: Esto devuelve un generador "suspended"
 
           collectibles[collectible.nftId] = {

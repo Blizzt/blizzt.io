@@ -150,8 +150,8 @@ const CollectibleAPI = {
       body: {
         nftCollectionAddress: nftAddress,
         nftId,
-        ipfsAddress,
-        metadata: JSON.stringify(metadata),
+        metadataJson: JSON.stringify(metadata),
+        metadata: ipfsAddress,
         mintedAmount: collectible.amount
       }
     });
