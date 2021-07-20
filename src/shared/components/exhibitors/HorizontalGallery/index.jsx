@@ -4,7 +4,8 @@ import Carrousel from 'react-multi-carousel';
 
 // Styled Components
 import {
-  Item
+  Item,
+  Title
 } from './styles';
 
 const responsive = {
@@ -27,19 +28,22 @@ const responsive = {
   }
 };
 
-function HorizontalGallery({ renderItem = () => {}, data = [] }) {
+function HorizontalGallery({ title, renderItem = () => {}, data = [] }) {
   return (
-    <Carrousel
-      ssr
-      partialVisbile
-      deviceType={'desktop'}
-      responsive={responsive}>
-      {data.map((props, index) => (
-        <Item key={`--carrousel-item-key-${index}`}>
-          {renderItem(props)}
-        </Item>
-      ))}
-    </Carrousel>
+    <>
+      <Title>{title}</Title>
+      <Carrousel
+        ssr
+        partialVisbile
+        deviceType={'desktop'}
+        responsive={responsive}>
+        {data.map((props, index) => (
+          <Item key={`--carrousel-item-key-${index}`}>
+            {renderItem(props)}
+          </Item>
+        ))}
+      </Carrousel>
+    </>
   );
 }
 
