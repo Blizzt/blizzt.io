@@ -89,3 +89,8 @@ export const Address = styled.span`
 	cursor: pointer;
 	color: ${common.colors.PRIMARY};
 `;
+
+export const Picture = styled.img`
+	width: 100%;
+	height: 100%;
+`;

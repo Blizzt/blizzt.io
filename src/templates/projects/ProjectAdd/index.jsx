@@ -16,11 +16,11 @@ import { modalTypesId } from '@types/ui';
 
 // Context
 import { ThemeContext } from '@styled-components/index';
-import AuthLayout from '@layouts/AuthLayout';
+
+// Layouts
 import PageLayout from '@layouts/PageLayout';
 
 function ProjectAddTemplate() {
-  // Get Hooks
   const {
     chainId,
     account

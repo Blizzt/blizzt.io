@@ -31,3 +31,8 @@ export const ProfileAction = styled.div`
 	display: flex;
 	align-items: center;
 `;
+
+export const Picture = styled.img`
+  width: 100%;
+  height: 100%;
+`;

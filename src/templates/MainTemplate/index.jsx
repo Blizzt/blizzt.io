@@ -34,9 +34,9 @@ function MainTemplate({ title, latestProjects = [] }) {
             data={latestProjects}
             renderItem={(project) => (
               <GameCard
-                name={project.name}
+                name={project.title}
                 categoryId={project.categoryId}
-                pictureUrl={project.photo}
+                pictureUrl={project.photoUrl}
               />
             )}
           />

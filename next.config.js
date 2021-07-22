@@ -10,6 +10,8 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true'
 });
 
-const config = {};
+const config = {
+  i18n
+};
 
-module.exports = withPlugins([[withBundleAnalyzer], withImages, removeImports, i18n], config);
+module.exports = withPlugins([[withBundleAnalyzer], withImages, removeImports], config);

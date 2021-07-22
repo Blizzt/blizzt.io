@@ -13,7 +13,9 @@ import {
   Row,
   Navigator,
   Address,
-  Balance, NavLink
+  Balance,
+  NavLink,
+  Picture
 } from './styles';
 import { common } from '@styled-components/common';
 
@@ -31,7 +33,8 @@ function AccountMenu({
   address = '',
   chainId = 1,
   balance = '0,000000',
-  onDismiss = () => {}
+  onDismiss = () => {},
+  user = null
 }) {
   // Hooks
   const ref = useRef(null);
@@ -41,13 +44,17 @@ function AccountMenu({
     <Layout ref={ref}>
       <Block>
         <Image>
-          <Blockies
-            size={16}
-            seed={address}
-            bgColor={common.colors.PRIMARY}
-            spotColor={common.colors.PRIMARY}
-            color={common.colors.PRIMARY_LIGHT}
-          />
+          {!user || !user.photoUrl ? (
+            <Blockies
+              size={16}
+              seed={address}
+              bgColor={common.colors.PRIMARY}
+              spotColor={common.colors.PRIMARY}
+              color={common.colors.PRIMARY_LIGHT}
+            />
+          ) : (
+            <Picture src={user.photoUrl} alt={user.username} />
+          )}
         </Image>
       </Block>
       <Block>

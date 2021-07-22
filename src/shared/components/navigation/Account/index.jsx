@@ -12,20 +12,21 @@ import { useIsomorphicLayoutEffect } from 'react-use';
 import { injected } from '@utils/web3';
 
 // Hooks
-import useENSName from '@hooks/useENSName';
 import useETHBalance from '@hooks/useETHBalance';
 
 // Components
 import MainButton from '@components/buttons/MainButton';
 import BalanceIndicator from '@components/indicators/BalanceIndicator';
 import NetworkIndicator from '@components/indicators/NetworkIndicator';
+import Fetch from '@components/utils/Fetch';
 
 // Styled Components
 import {
   Layout,
   UserInfo,
   ProfileAction,
-  ImageSource
+  ImageSource,
+  Picture
 } from './styles';
 
 // Assets
@@ -34,6 +35,9 @@ import { ChevronDownOutline } from 'react-ionicons';
 // Utils
 import { common } from '@styled-components/common';
 import AccountMenu from '@components/menus/AccountMenu';
+
+// API
+import { GET_ME } from '@api/auth';
 
 const Account = ({ triedToEagerConnect }) => {
   const {
@@ -60,15 +64,13 @@ const Account = ({ triedToEagerConnect }) => {
   }, []);
 
   // manage connecting state for injected connector
-  const [connecting, setConnecting] = useState(false);
+  const [, setConnecting] = useState(false);
   useEffect(() => {
     if (active || error) {
       setConnecting(false);
       onboarding.current?.stopOnboarding();
     }
   }, [active, error]);
-
-  const ENSName = useENSName(account);
 
   if (error) {
     return null;
@@ -111,17 +113,6 @@ const Account = ({ triedToEagerConnect }) => {
     );
   }
 
-  /*
-      <a
-      {...{
-        href: formatEtherscanLink('Account', [chainId, account]),
-        target: '_blank',
-        rel: 'noopener noreferrer'
-      }}
-    >
-      {ENSName || `${shortenHex(account, 4)}`}
-    </a>
-   */
   return (
     <Layout>
       <UserInfo>
@@ -131,29 +122,41 @@ const Account = ({ triedToEagerConnect }) => {
         <BalanceIndicator
           balance={balance}
         />
-        <ProfileAction onClick={onClickUserAccount}>
-          <ImageSource>
-            <Blockies
-              seed={account}
-              size={10}
-              color={common.colors.PRIMARY_LIGHT}
-              bgColor={common.colors.PRIMARY}
-              spotColor={common.colors.PRIMARY}
-            />
-          </ImageSource>
-          <ChevronDownOutline
-            width={'16px'}
-            height={'16px'}
-          />
-        </ProfileAction>
-        {isMenuVisible && (
-          <AccountMenu
-            onDismiss={onClickUserAccount}
-            address={account}
-            chainId={chainId}
-            balance={balance}
-          />
-        )}
+        <Fetch
+          gql={GET_ME}
+          onRender={(data, error) => (
+            <>
+              <ProfileAction onClick={onClickUserAccount}>
+                <ImageSource>
+                  {error || !data.me.photoUrl ? (
+                    <Blockies
+                      seed={account}
+                      size={10}
+                      color={common.colors.PRIMARY_LIGHT}
+                      bgColor={common.colors.PRIMARY}
+                      spotColor={common.colors.PRIMARY}
+                    />
+                  ) : (
+                    <Picture src={data.me?.photoUrl} />
+                  )}
+                </ImageSource>
+                <ChevronDownOutline
+                  width={'16px'}
+                  height={'16px'}
+                />
+              </ProfileAction>
+              {isMenuVisible && (
+                <AccountMenu
+                  onDismiss={onClickUserAccount}
+                  address={account}
+                  chainId={chainId}
+                  balance={balance}
+                  user={error ? null : data.me}
+                />
+              )}
+            </>
+          )}
+        />
       </UserInfo>
     </Layout>
   );

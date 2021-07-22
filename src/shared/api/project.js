@@ -1,9 +1,24 @@
 // Dependencies
+import gql from 'graphql-tag';
 import fetchAPI from '@utils/api';
 
 // Utils
 import errorHandler from '@utils/errorHandler';
 import { IPFS } from '@utils/web3';
+
+export const CREATE_PROJECT = gql`
+  mutation CreateProject(
+    $title: String!
+    $description: String!
+  ) {
+    createProject(
+      title: $title
+      description: $description
+    ) {
+      id
+    }
+  }
+`;
 
 const ProjectAPI = {
   /**
@@ -83,7 +98,7 @@ const ProjectAPI = {
       // TODO: Jorge, esto debería volver los metadatos de IPFS.
       await Promise.all(
         ids.map(async(collectible) => {
-          console.log('COLLECTIBLES',collectible);
+          console.log('COLLECTIBLES', collectible);
           const meta = collectible.metadata;
           const data = await IPFS.get(meta); // TODO: Esto devuelve un generador "suspended"
 

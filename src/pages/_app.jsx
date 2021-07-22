@@ -4,12 +4,10 @@ import { Web3Provider } from '@ethersproject/providers';
 import { Web3ReactProvider } from '@web3-react/core';
 import { CookiesProvider } from 'react-cookie';
 import { SWRConfig } from 'swr';
+import { appWithTranslation } from 'next-i18next';
 
 // Styled Theme
 import { StyledThemeProvider } from '@styled-components/index';
-
-// i18Next Translations
-import { appWithTranslation } from '@i18n/index';
 
 // Application Layout
 import AppLayout from '@layouts/AppLayout';

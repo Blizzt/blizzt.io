@@ -34,7 +34,7 @@ function HorizontalGallery({ title, renderItem = () => {}, data = [] }) {
       <Title>{title}</Title>
       <Carrousel
         ssr
-        partialVisbile
+        swipeable={false}
         deviceType={'desktop'}
         responsive={responsive}>
         {data.map((props, index) => (
