@@ -14,17 +14,7 @@ export const LATEST_PROJECTS = gql`
     projects(order: DESC) {
       id
       title
-      description
-      isPublic
       photoUrl
-      
-      creator {
-        id
-        username
-        address
-        photoUrl
-        role
-      }
     }
   }
 `;
@@ -35,8 +25,6 @@ function Main() {
   if (loading) {
     return null;
   }
-
-  console.log({ latestProjects });
 
   return (
     <MainTemplate

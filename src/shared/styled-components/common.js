@@ -63,7 +63,7 @@ const common = {
   },
 
   transitions: {
-    FAST: 'all 0.1s ease-in-out',
+    FAST: 'all 250ms ease-in-out',
     MEDIUM: 'all 0.3s ease-in-out',
     SLOW: 'all 0.5s ease-in-out'
   }

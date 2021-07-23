@@ -19,6 +19,22 @@ const selectorStatesId = {
   OPEN: 'open'
 };
 
+const MemorizedItem = React.memo(({ selected, item, onClick = () => {} }) => (
+  <Item
+    active={selected}
+    onClick={() => onClick(item)}
+  >
+    <Text>{item.name}</Text>
+    {selected && (
+      <SelectedCheck>
+        <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'>
+          <path fill='none' stroke='#000' strokeLinecap='round' strokeLinejoin='round' strokeWidth='32' d='M416 128L192 384l-96-96'/>
+        </svg>
+      </SelectedCheck>
+    )}
+  </Item>
+), (prevProps, nextProps) => prevProps.selected !== nextProps.selected);
+
 function MainSelector({
   items = [],
   onChange = () => {},
@@ -40,7 +56,7 @@ function MainSelector({
   	if (!selected) {
   		return 'Select your category';
     }
-  	return items.find(e => e.id === selected).label;
+  	return items.find(e => e.id === selected).name;
   }, [selected]);
 
   const onClickItem = useCallback((item) => {
@@ -63,20 +79,12 @@ function MainSelector({
 					{items.map((item, index) => {
 					  const isThisItemSelected = item.id === selected;
 					  return (
-							<Item
-								key={`--mein-selector-item-${index.toString()}`}
-								active={isThisItemSelected}
-								onClick={() => onClickItem(item)}
-							>
-								<Text>{item.label}</Text>
-								{isThisItemSelected && (
-									<SelectedCheck>
-										<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'>
-											<path fill='none' stroke='#000' strokeLinecap='round' strokeLinejoin='round' strokeWidth='32' d='M416 128L192 384l-96-96'/>
-										</svg>
-									</SelectedCheck>
-								)}
-							</Item>
+							<MemorizedItem
+                key={`--mein-selector-item-${index.toString()}`}
+                item={item}
+                onClick={onClickItem}
+                selected={isThisItemSelected}
+              />
 					  );
 					})}
 				</List>

@@ -13,11 +13,13 @@ import { withApollo } from '@api/apollo';
 import { CREATE_PROJECT } from '@api/project';
 
 function AddProject() {
-  const [createProject, { data }] = useMutation(CREATE_PROJECT);
+  const [createProject] = useMutation(CREATE_PROJECT);
 
   return (
     <AuthLayout>
-      <ProjectAddTemplate />
+      <ProjectAddTemplate
+        createProject={createProject}
+      />
     </AuthLayout>
   );
 }

@@ -2,8 +2,7 @@
 import React, { useCallback } from 'react';
 import { verifyMessage } from '@ethersproject/wallet';
 import { useWeb3React } from '@web3-react/core';
-import { useRouter } from 'next/router';
-import useSWR from 'swr';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 
 // Templates
 import EditMyProjectTemplate from '@templates/projects/ProjectEdit';
@@ -13,7 +12,7 @@ import MarkdownEditForm from '@components/forms/edit-projects/MarkdownEditForm';
 import SectionTitle from '@components/titles/SectionTitle';
 
 // API
-import ProjectAPI from '@api/project';
+import { EDIT_PROJECT, GET_PROJECT_DETAILS_FOR_EDIT } from '@api/project';
 
 // Styled Components
 import { PageMargin } from '@styled-components/pagination';
@@ -21,13 +20,14 @@ import { PageMargin } from '@styled-components/pagination';
 // Hooks
 import usePersonalSign from '@hooks/usePersonalSign';
 
-function EditMyProject(props) {
-  // Hooks
-  const router = useRouter();
-  const { projectId } = router.query;
+function EditMyProject({ projectId }) {
+  const [editProject] = useMutation(EDIT_PROJECT);
 
-  // Project Data
-  const { data: project = {}, mutate } = useSWR(`/projects/${projectId}`, { initialData: props.project });
+  const { data: { project } = {}, loading } = useQuery(GET_PROJECT_DETAILS_FOR_EDIT, {
+    variables: {
+      id: projectId
+    }
+  });
 
   // Hooks
   const { account, chainId } = useWeb3React();
@@ -41,27 +41,20 @@ function EditMyProject(props) {
 
       // 2. Verify Data Signed and Signature
       if (verifyMessage(dataToSign, signature) === account) {
-        await mutate(`/projects/${projectId}`, {
-          ...project,
-          document: values.document
-        }, false);
-
-        const response = await ProjectAPI.edit(project._id, {
-          document: values.document,
-          signature,
-          dataToSign
-        });
-
-        if (response && response.statusCode === 200) {
+        editProject({
+          variables: {
+            id: projectId,
+            data: {
+              document: values.document
+            }
+          }
+        }).then(() => {
           actionButtonRef.changeToComplete('Changes are saved');
-
           formikHelpers.resetForm({
             values,
             isValidating: false
           });
-        }
-
-        await mutate(`/projects/${projectId}`);
+        });
       } else {
         return new Error({
           code: 1,
@@ -75,11 +68,6 @@ function EditMyProject(props) {
           formikHelpers.setSubmitting(false);
           break;
         }
-        case 1: {
-          actionButtonRef.changeToError(e.message);
-          formikHelpers.setSubmitting(false);
-          break;
-        }
         default: {
           actionButtonRef.changeToError('Changes not applied');
           formikHelpers.setSubmitting(false);
@@ -89,8 +77,12 @@ function EditMyProject(props) {
     }
   }, [project, projectId, account, chainId]);
 
+  if (loading) {
+    return null;
+  }
+
   return (
-    <EditMyProjectTemplate project={project} title={`${project.name} - Edit information`}>
+    <EditMyProjectTemplate project={project} title={`${project.title} - Edit information`}>
       <SectionTitle
         title={'The details of your idea matter.'}
         description={'Describe your idea so that players and investors can know about it.'}>
@@ -106,10 +98,9 @@ function EditMyProject(props) {
 }
 
 export async function getServerSideProps({ params: { projectId } }) {
-  const { data: project } = await ProjectAPI.getById(projectId);
   return {
     props: {
-      project
+      projectId
     }
   };
 }

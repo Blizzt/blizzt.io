@@ -1,8 +1,8 @@
 import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
-import { HttpLink } from 'apollo-link-http';
 import fetch from 'isomorphic-unfetch';
 import Cookies from 'universal-cookie';
+import { createUploadLink } from 'apollo-upload-client';
 
 const customFetch = (uri, options) => {
   const cookies = new Cookies();
@@ -27,10 +27,11 @@ export default function createApolloClient(initialState, ctx) {
 
   return new ApolloClient({
     ssrMode: Boolean(ctx),
-    link: new HttpLink({
+    link: createUploadLink({
       uri: 'http://localhost:8000/graphql',
       credentials: 'same-origin',
       headers: {
+        'keep-alive': 'true',
         ...(token !== undefined && {
           'x-token': token
         })

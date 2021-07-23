@@ -8,9 +8,6 @@ import { PageContainer, PageMargin } from '@styled-components/pagination';
 // Components
 import AddProjectForm from '@components/forms/AddProjectForm';
 
-// API:
-import ProjectAPI from '@api/project';
-
 // Types
 import { modalTypesId } from '@types/ui';
 
@@ -20,7 +17,7 @@ import { ThemeContext } from '@styled-components/index';
 // Layouts
 import PageLayout from '@layouts/PageLayout';
 
-function ProjectAddTemplate() {
+function ProjectAddTemplate({ createProject = () => {} }) {
   const {
     chainId,
     account
@@ -29,24 +26,25 @@ function ProjectAddTemplate() {
   // Context
   const { openModal } = useContext(ThemeContext);
 
-  const onAddProject = useCallback(async({ values: project, formikHelpers, actionButtonRef }) => {
+  const onAddProject = useCallback(({ values: project, formikHelpers, actionButtonRef }) => {
     formikHelpers.setSubmitting(true);
     actionButtonRef.changeToLoading('Adding project...');
 
-    try {
-      const response = await ProjectAPI.create(project, { account, chainId });
-
-      if (response && response.statusCode === 201) {
-        const { data: { _id } } = response;
-        actionButtonRef.changeToComplete('Project successfully created!');
-
-        openModal(modalTypesId.CREATE_MY_PROJECT_SUCCESS, {
-          projectId: _id
-        });
+    createProject({
+      variables: {
+        title: project.name,
+        categoryId: project.categoryId,
+        description: project.description,
+        photo: project.photo
       }
-    } catch (e) {
-      console.error(e);
-    }
+    }).then(({ data: { createProject: project } }) => {
+      actionButtonRef.changeToComplete('Project successfully created!');
+      openModal(modalTypesId.CREATE_MY_PROJECT_SUCCESS, {
+        projectId: project.id
+      });
+    }).catch(() => {
+      actionButtonRef.changeToError('Project not created');
+    });
   }, [chainId, account, openModal]);
 
   return (

@@ -59,22 +59,24 @@ function PromotionEditForm({
   onSubmit = () => {},
   project: {
     isPublic = false,
-    webUrl = '',
-    kickstarterUrl = '',
-    steamUrl = '',
-    playstationUrl = '',
-    xboxUrl = '',
-    googlePlayUrl = '',
-    appleStoreUrl = '',
-    twitchUrl = '',
-    youtubeUrl = '',
-    facebookUrl = '',
-    twitterUrl = '',
-    instagramUrl = '',
-    vkUrl = '',
-    discordUrl = '',
-    redditUrl = '',
-    telegramUrl = ''
+    details: {
+      web = '',
+      kickstarter = '',
+      steam = '',
+      playstation = '',
+      xbox = '',
+      android = '',
+      ios = '',
+      twitch = '',
+      youtube = '',
+      facebook = '',
+      twitter = '',
+      instagram = '',
+      vk = '',
+      discord = '',
+      reddit = '',
+      telegram = ''
+    }
   }
 }) {
   // Ref
@@ -84,22 +86,22 @@ function PromotionEditForm({
   const formik = useFormik({
     initialValues: {
       isPublic,
-      webUrl,
-      kickstarterUrl,
-      steamUrl,
-      playstationUrl,
-      xboxUrl,
-      googlePlayUrl,
-      appleStoreUrl,
-      twitchUrl,
-      youtubeUrl,
-      facebookUrl,
-      twitterUrl,
-      instagramUrl,
-      vkUrl,
-      discordUrl,
-      redditUrl,
-      telegramUrl
+      web,
+      kickstarter,
+      steam,
+      playstation,
+      xbox,
+      android,
+      ios,
+      twitch,
+      youtube,
+      facebook,
+      twitter,
+      instagram,
+      vk,
+      discord,
+      reddit,
+      telegram
     },
     validationSchema,
     onSubmit: (values, formikHelpers) => {
@@ -120,8 +122,8 @@ function PromotionEditForm({
         <InputText
           key={'1'}
           label={'Official website'}
-          error={getErrorFromField('webUrl')}
-          value={formik.values.webUrl}
+          error={getErrorFromField('web')}
+          value={formik.values.web}
           placeholder={'https://www.your-project-name.com'}
           icon={
             <GlobeOutline
@@ -130,14 +132,14 @@ function PromotionEditForm({
               color={common.colors.PRIMARY}
             />
           }
-          onChangeText={webUrl => changeValue('webUrl', webUrl)}
+          onChangeText={web => changeValue('web', web)}
         />,
         <InputText
           key={'2'}
           label={'Your project on Kickstarter'}
           description={'You can tell users that they can contribute to your project from Kickstarter.'}
-          error={getErrorFromField('kickstarterUrl')}
-          value={formik.values.kickstarterUrl}
+          error={getErrorFromField('kickstarter')}
+          value={formik.values.kickstarter}
           placeholder={'https://kickstarter.com/projects/project-id/project-name'}
           icon={
             <BrandingIcon
@@ -146,7 +148,7 @@ function PromotionEditForm({
               height={'18px'}
             />
           }
-          onChangeText={kickstarterUrl => changeValue('kickstarterUrl', kickstarterUrl)}
+          onChangeText={kickstarter => changeValue('kickstarter', kickstarter)}
         />,
         <VisibilityContainer key={'3'}>
           <SwitchInput
@@ -159,7 +161,7 @@ function PromotionEditForm({
         </VisibilityContainer>
       ]}
     />
-  ), [formik.values.isPublic, formik.values.kickstarterUrl, getErrorFromField]);
+  ), [formik.values.isPublic, formik.values.kickstarter, getErrorFromField]);
 
   const renderPC = useMemo(() => (
     <Collapsible
@@ -182,8 +184,8 @@ function PromotionEditForm({
           <InputText
             key={'1'}
             label={'Steam'}
-            error={getErrorFromField('steamUrl')}
-            value={formik.values.steamUrl}
+            error={getErrorFromField('steam')}
+            value={formik.values.steam}
             placeholder={'https://store.steampowered.com/app/your-game-steam-id'}
             icon={
               <LogoSteam
@@ -192,12 +194,12 @@ function PromotionEditForm({
                 color={common.colors.BLACK}
               />
             }
-            onChangeText={steamUrl => changeValue('steamUrl', steamUrl)}
+            onChangeText={steam => changeValue('steam', steam)}
           />
         ]}
       />
     </Collapsible>
-  ), [formik.values.steamUrl, getErrorFromField]);
+  ), [formik.values.steam, getErrorFromField]);
 
   const renderConsole = useMemo(() => (
     <Collapsible
@@ -220,8 +222,8 @@ function PromotionEditForm({
           <InputText
             key={'1'}
             label={'PlayStation Store'}
-            error={getErrorFromField('playstationUrl')}
-            value={formik.values.playstationUrl}
+            error={getErrorFromField('playstation')}
+            value={formik.values.playstation}
             placeholder={'https://store.playstation.com/en-us/product/your-product-id'}
             icon={
               <LogoPlaystation
@@ -230,13 +232,13 @@ function PromotionEditForm({
                 color={common.colors.COLOR_PSSTORE}
               />
             }
-            onChangeText={playstationUrl => changeValue('playstationUrl', playstationUrl)}
+            onChangeText={playstation => changeValue('playstation', playstation)}
           />,
           <InputText
             key={'2'}
             label={'Xbox Store'}
-            error={getErrorFromField('xboxUrl')}
-            value={formik.values.xboxUrl}
+            error={getErrorFromField('xbox')}
+            value={formik.values.xbox}
             placeholder={'https://www.xbox.com/en-us/games/your-project-name'}
             icon={
               <LogoXbox
@@ -245,12 +247,12 @@ function PromotionEditForm({
                 color={common.colors.COLOR_XBOX}
               />
             }
-            onChangeText={xboxUrl => changeValue('xboxUrl', xboxUrl)}
+            onChangeText={xbox => changeValue('xbox', xbox)}
           />
         ]}
       />
     </Collapsible>
-  ), [formik.values.playstationUrl, formik.values.xboxUrl, getErrorFromField]);
+  ), [formik.values.playstation, formik.values.xbox, getErrorFromField]);
 
   const renderMobile = useMemo(() => (
     <Collapsible
@@ -273,8 +275,8 @@ function PromotionEditForm({
           <InputText
             key={'1'}
             label={'Google PlayStore'}
-            error={getErrorFromField('googlePlayUrl')}
-            value={formik.values.googlePlayUrl}
+            error={getErrorFromField('android')}
+            value={formik.values.android}
             placeholder={'https://play.google.com/store/apps/details?id=your-project-playstore-id'}
             icon={
               <LogoGooglePlaystore
@@ -283,13 +285,13 @@ function PromotionEditForm({
                 color={common.colors.COLOR_PLAYSTORE}
               />
             }
-            onChangeText={googlePlayUrl => changeValue('googlePlayUrl', googlePlayUrl)}
+            onChangeText={android => changeValue('android', android)}
           />,
           <InputText
             key={'2'}
             label={'Apple AppStore'}
-            error={getErrorFromField('appleStoreUrl')}
-            value={formik.values.appleStoreUrl}
+            error={getErrorFromField('ios')}
+            value={formik.values.ios}
             placeholder={'https://apps.apple.com/cl/app/your-project-name'}
             icon={
               <LogoAppleAppstore
@@ -298,13 +300,12 @@ function PromotionEditForm({
                 color={common.colors.COLOR_APPSTORE}
               />
             }
-            onChangeText={appleStoreUrl => changeValue('appleStoreUrl', appleStoreUrl)}
+            onChangeText={ios => changeValue('ios', ios)}
           />
-
         ]}
       />
     </Collapsible>
-  ), [formik.values.googlePlayUrl, formik.values.appleStoreUrl, getErrorFromField]);
+  ), [formik.values.android, formik.values.ios, getErrorFromField]);
 
   const renderChannels = useMemo(() => (
     <Collapsible
@@ -327,8 +328,8 @@ function PromotionEditForm({
           <InputText
             key={'1'}
             label={'Twitch Channel'}
-            error={getErrorFromField('youtubeUrl')}
-            value={formik.values.youtubeUrl}
+            error={getErrorFromField('youtube')}
+            value={formik.values.youtube}
             placeholder={'https://www.twitch.tv/your-project-name'}
             icon={
               <LogoTwitch
@@ -337,13 +338,13 @@ function PromotionEditForm({
                 color={common.colors.COLOR_TWITCH}
               />
             }
-            onChangeText={youtubeUrl => changeValue('youtubeUrl', youtubeUrl)}
+            onChangeText={youtube => changeValue('youtube', youtube)}
           />,
           <InputText
             key={'2'}
             label={'Youtube Channel'}
-            error={getErrorFromField('youtubeUrl')}
-            value={formik.values.youtubeUrl}
+            error={getErrorFromField('youtube')}
+            value={formik.values.youtube}
             placeholder={'https://www.youtube.com/user/your-project-name'}
             icon={
               <LogoYoutube
@@ -352,12 +353,12 @@ function PromotionEditForm({
                 color={common.colors.COLOR_YOUTUBE}
               />
             }
-            onChangeText={youtubeUrl => changeValue('youtubeUrl', youtubeUrl)}
+            onChangeText={youtube => changeValue('youtube', youtube)}
           />
         ]}
       />
     </Collapsible>
-  ), [formik.values.twitchUrl, formik.values.youtubeUrl, getErrorFromField]);
+  ), [formik.values.twitch, formik.values.youtube, getErrorFromField]);
 
   const renderSocialNetworks = useMemo(() => (
     <Collapsible
@@ -381,8 +382,8 @@ function PromotionEditForm({
           <InputText
             key={'1'}
             label={'Facebook Page'}
-            error={getErrorFromField('facebookUrl')}
-            value={formik.values.facebookUrl}
+            error={getErrorFromField('facebook')}
+            value={formik.values.facebook}
             placeholder={'https://www.facebook.com/your-project-name'}
             icon={
               <LogoFacebook
@@ -391,13 +392,13 @@ function PromotionEditForm({
                 color={common.colors.COLOR_FACEBOOK}
               />
             }
-            onChangeText={facebookUrl => changeValue('facebookUrl', facebookUrl)}
+            onChangeText={facebook => changeValue('facebook', facebook)}
           />,
           <InputText
             key={'2'}
             label={'Twitter'}
-            error={getErrorFromField('twitterUrl')}
-            value={formik.values.twitterUrl}
+            error={getErrorFromField('twitter')}
+            value={formik.values.twitter}
             placeholder={'https://twitter.com/your-project-name'}
             icon={
               <LogoTwitter
@@ -406,13 +407,13 @@ function PromotionEditForm({
                 color={common.colors.COLOR_TWITTER}
               />
             }
-            onChangeText={twitterUrl => changeValue('twitterUrl', twitterUrl)}
+            onChangeText={twitter => changeValue('twitter', twitter)}
           />,
           <InputText
             key={'3'}
             label={'Instagram'}
-            error={getErrorFromField('instagramUrl')}
-            value={formik.values.instagramUrl}
+            error={getErrorFromField('instagram')}
+            value={formik.values.instagram}
             placeholder={'https://www.instagram.com/your-project-name'}
             icon={
               <LogoInstagram
@@ -421,13 +422,13 @@ function PromotionEditForm({
                 color={common.colors.COLOR_INSTAGRAM}
               />
             }
-            onChangeText={instagramUrl => changeValue('instagramUrl', instagramUrl)}
+            onChangeText={instagram => changeValue('instagram', instagram)}
           />,
           <InputText
             key={'4'}
             label={'Vkontakte'}
-            error={getErrorFromField('vkUrl')}
-            value={formik.values.vkUrl}
+            error={getErrorFromField('vk')}
+            value={formik.values.vk}
             placeholder={'https://vk.com/your-project-name'}
             icon={
               <LogoVk
@@ -436,12 +437,12 @@ function PromotionEditForm({
                 color={common.colors.COLOR_VK}
               />
             }
-            onChangeText={weChatUrl => changeValue('weChatUrl', weChatUrl)}
+            onChangeText={vk => changeValue('vk', vk)}
           />
         ]}
       />
     </Collapsible>
-  ), [formik.values.facebookUrl, formik.values.twitterUrl, formik.values.instagramUrl, getErrorFromField]);
+  ), [formik.values.facebook, formik.values.twitter, formik.values.vk, formik.values.instagram, getErrorFromField]);
 
   const renderCommunities = useMemo(() => (
     <Collapsible
@@ -465,8 +466,8 @@ function PromotionEditForm({
           <InputText
             key={'1'}
             label={'Discord Channel'}
-            error={getErrorFromField('discordUrl')}
-            value={formik.values.discordUrl}
+            error={getErrorFromField('discord')}
+            value={formik.values.discord}
             placeholder={'https://discord.com/invite/your-project-name'}
             icon={
               <LogoDiscord
@@ -475,13 +476,13 @@ function PromotionEditForm({
                 color={common.colors.COLOR_DISCORD}
               />
             }
-            onChangeText={discordUrl => changeValue('discordUrl', discordUrl)}
+            onChangeText={discord => changeValue('discord', discord)}
           />,
           <InputText
             key={'2'}
             label={'Reddit'}
-            error={getErrorFromField('redditUrl')}
-            value={formik.values.redditUrl}
+            error={getErrorFromField('reddit')}
+            value={formik.values.reddit}
             placeholder={'https://www.reddit.com/r/your-project-name'}
             icon={
               <LogoReddit
@@ -490,13 +491,13 @@ function PromotionEditForm({
                 color={common.colors.COLOR_REDDIT}
               />
             }
-            onChangeText={redditUrl => changeValue('redditUrl', redditUrl)}
+            onChangeText={reddit => changeValue('reddit', reddit)}
           />,
           <InputText
             key={'3'}
             label={'Telegram'}
-            error={getErrorFromField('telegramUrl')}
-            value={formik.values.telegramUrl}
+            error={getErrorFromField('telegram')}
+            value={formik.values.telegram}
             placeholder={'https://t.me/your-project-name'}
             icon={
               <BrandingIcon
@@ -505,12 +506,12 @@ function PromotionEditForm({
                 src={TelegramIcon}
               />
             }
-            onChangeText={telegramUrl => changeValue('telegramUrl', telegramUrl)}
+            onChangeText={telegram => changeValue('telegram', telegram)}
           />
         ]}
       />
     </Collapsible>
-  ), [formik.values.discordUrl, formik.values.redditUrl, formik.values.telegramUrl, getErrorFromField]);
+  ), [formik.values.discord, formik.values.reddit, formik.values.telegram, getErrorFromField]);
 
   return (
     <Layout onSubmit={formik.handleSubmit}>

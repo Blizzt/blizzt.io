@@ -9,7 +9,7 @@ const SUPPORTED_FORMATS = [
 ];
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string()
+  title: Yup.string()
     .min(5, 'The name is too short')
     .required('You must enter a name'),
 
@@ -20,7 +20,7 @@ const validationSchema = Yup.object().shape({
   categoryId: Yup.number()
     .required('You must indicate the category of your project'),
 
-  photo: Yup.mixed()
+  photoUrl: Yup.mixed()
     .required('It is mandatory to insert an image here')
     .test(
       'fileSize',

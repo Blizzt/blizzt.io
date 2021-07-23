@@ -124,11 +124,11 @@ const Account = ({ triedToEagerConnect }) => {
         />
         <Fetch
           gql={GET_ME}
-          onRender={(data, error) => (
+          onRender={({ me }, error) => (
             <>
               <ProfileAction onClick={onClickUserAccount}>
                 <ImageSource>
-                  {error || !data.me.photoUrl ? (
+                  {error || !me?.photoUrl ? (
                     <Blockies
                       seed={account}
                       size={10}
@@ -137,7 +137,7 @@ const Account = ({ triedToEagerConnect }) => {
                       spotColor={common.colors.PRIMARY}
                     />
                   ) : (
-                    <Picture src={data.me?.photoUrl} />
+                    <Picture src={me?.photoUrl} />
                   )}
                 </ImageSource>
                 <ChevronDownOutline
@@ -151,7 +151,7 @@ const Account = ({ triedToEagerConnect }) => {
                   address={account}
                   chainId={chainId}
                   balance={balance}
-                  user={error ? null : data.me}
+                  user={error ? null : me}
                 />
               )}
             </>

@@ -22,12 +22,11 @@ import Button, { buttonTypesId } from '@components/buttons/MainButton';
 import FormColumn from '@forms-components/FormColumn';
 import InputText from '@components/inputs/TextInput';
 import InputFile from '@components/inputs/InputFile';
-
-// Types
-import { categories } from '@types/categories';
+import Fetch from '@components/utils/Fetch';
 
 // Validations
 import validationSchema from './validation';
+import { GET_ALL_CATEGORIES } from '@api/category';
 
 function CreateProjectForm({
   onSubmit = () => {}
@@ -89,13 +88,21 @@ function CreateProjectForm({
 				  'Categorizing your project will make it easier for you to reach the right audience and increase your chances of getting investors to fund you.'
 				]}
 				fields={[
-					<MainSelector
+					<Fetch
 						key={'category'}
-						items={categories}
-						isSubmitting={formik.isSubmitting}
-						error={getErrorFromField('categoryId')}
-						selected={formik.values.categoryId}
-						onChange={category => changeValue('categoryId', category.id)}
+						gql={GET_ALL_CATEGORIES}
+						onRender={({ categories }) => (
+							<>
+								<MainSelector
+									key={'category'}
+									items={categories}
+									isSubmitting={formik.isSubmitting}
+									error={getErrorFromField('categoryId')}
+									selected={formik.values.categoryId}
+									onChange={category => changeValue('categoryId', category.id)}
+								/>
+							</>
+						)}
 					/>
 				]}
 			/>

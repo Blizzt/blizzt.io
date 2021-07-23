@@ -10,12 +10,81 @@ export const CREATE_PROJECT = gql`
   mutation CreateProject(
     $title: String!
     $description: String!
+    $categoryId: Int!
+    $photo: Upload!
   ) {
     createProject(
       title: $title
       description: $description
+      categoryId: $categoryId
+      photo: $photo
     ) {
       id
+    }
+  }
+`;
+
+export const EDIT_PROJECT = gql`
+  mutation EditProject(
+    $id: ID!
+    $data: ProjectInput!
+  ) {
+    editProject(
+      id: $id
+      data: $data
+    ) {
+      id
+      title
+      description
+    }
+  }
+`;
+
+export const GET_PROJECT_DETAILS_FOR_EDIT = gql`
+  query GetProject($id: ID!) {
+    project(id: $id) {
+      id
+      title
+      isPublic
+      description
+      document
+      photoUrl
+      createdAt
+      
+      category {
+        id
+      }
+      
+      details {
+        web
+        kickstarter
+        steam
+        playstation
+        xbox
+        android
+        ios
+        twitch
+        youtube
+        facebook
+        twitter
+        instagram
+        vk
+        discord
+        reddit
+        telegram
+      }
+    }
+  }
+`;
+
+export const GET_PROJECT_DETAILS = gql`
+  query GetProject($id: String!) {
+    project(id: $id) {
+      id
+      title
+      description
+      isPublic
+      photoUrl
     }
   }
 `;

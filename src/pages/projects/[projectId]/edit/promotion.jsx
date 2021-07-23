@@ -2,8 +2,7 @@
 import React, { useCallback } from 'react';
 import { verifyMessage } from '@ethersproject/wallet';
 import { useWeb3React } from '@web3-react/core';
-import { useRouter } from 'next/router';
-import useSWR from 'swr';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 
 // Templates
 import EditMyProjectTemplate from '@templates/projects/ProjectEdit';
@@ -15,19 +14,22 @@ import PromotionEditForm from '@components/forms/edit-projects/PromotionEditForm
 // Styled Components
 import { PageMargin } from '@styled-components/pagination';
 
-// API
-import ProjectAPI from '@api/project';
-
 // Hooks
 import usePersonalSign from '@hooks/usePersonalSign';
 
-function EditMyProject(props) {
-  // Hooks
-  const router = useRouter();
-  const { projectId } = router.query;
+// API
+import { EDIT_PROJECT, GET_PROJECT_DETAILS_FOR_EDIT } from '@api/project';
 
-  // Project Data
-  const { data: project = null, mutate } = useSWR(`/projects/${projectId}`, { initialData: props.project });
+function EditMyProject({ projectId }) {
+  const [editProject] = useMutation(EDIT_PROJECT);
+
+  console.log({ projectId });
+
+  const { data: { project } = {}, loading } = useQuery(GET_PROJECT_DETAILS_FOR_EDIT, {
+    variables: {
+      id: projectId
+    }
+  });
 
   // Web3
   const { account, chainId } = useWeb3React();
@@ -41,22 +43,38 @@ function EditMyProject(props) {
 
       // 2. Verify Data Signed and Signature
       if (verifyMessage(dataToSign, signature) === account) {
-        const response = await ProjectAPI.edit(project._id, {
-          ...values,
-          signature,
-          dataToSign
-        });
-
-        if (response && response.statusCode === 200) {
+        editProject({
+          variables: {
+            id: projectId,
+            data: {
+              isPublic: values.isPublic,
+              details: {
+                web: values.web,
+                kickstarter: values.kickstarter,
+                steam: values.steam,
+                playstation: values.playstation,
+                xbox: values.xbox,
+                android: values.android,
+                ios: values.ios,
+                twitch: values.twitch,
+                youtube: values.youtube,
+                facebook: values.facebook,
+                twitter: values.twitter,
+                instagram: values.instagram,
+                vk: values.vk,
+                discord: values.discord,
+                reddit: values.reddit,
+                telegram: values.telegram
+              }
+            }
+          }
+        }).then(() => {
           actionButtonRef.changeToComplete('Changes are saved');
-
           formikHelpers.resetForm({
             values,
             isValidating: false
           });
-        }
-
-        await mutate(`/projects/${projectId}`);
+        });
       } else {
         return new Error({
           code: 1,
@@ -70,11 +88,6 @@ function EditMyProject(props) {
           formikHelpers.setSubmitting(false);
           break;
         }
-        case 1: {
-          actionButtonRef.changeToError(e.message);
-          formikHelpers.setSubmitting(false);
-          break;
-        }
         default: {
           actionButtonRef.changeToError('Changes not applied');
           formikHelpers.setSubmitting(false);
@@ -84,10 +97,14 @@ function EditMyProject(props) {
     }
   }, [projectId, project, account, chainId]);
 
+  if (loading) {
+    return null;
+  }
+
   return (
     <EditMyProjectTemplate
       project={project}
-      title={`${project.name} - Edit promotion`}
+      title={`${project.title} - Edit promotion`}
     >
       <SectionTitle
         title={'Basic information about your project'}
@@ -104,10 +121,9 @@ function EditMyProject(props) {
 }
 
 export async function getServerSideProps({ params: { projectId } }) {
-  const { data: project } = await ProjectAPI.getById(projectId);
   return {
     props: {
-      project
+      projectId
     }
   };
 }

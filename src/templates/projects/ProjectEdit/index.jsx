@@ -55,11 +55,11 @@ function ProjectEdit({ project, children, title = 'Edit Project' }) {
                   <MainImage
                     radius={4}
                     aspectRatio={imageAspectRatio.SIXTEEN}
-                    source={project.photo}
+                    source={project.photoUrl}
                   />
                 </Picture>
                 <Data>
-                  <Title>{project.name}</Title>
+                  <Title>{project.title}</Title>
                   {renderCreatedAt}
                 </Data>
               </Column>
@@ -69,7 +69,7 @@ function ProjectEdit({ project, children, title = 'Edit Project' }) {
                 <ActiveLink
                   activeClassName={'active'}
                   key={`--section-edit-key-${index.toString()}`}
-                  href={`/projects/${project._id}/edit${section.path}`}
+                  href={`/projects/${project.id}/edit${section.path}`}
                 >
                   <Item>
                     <Icon>{section.icon}</Icon>

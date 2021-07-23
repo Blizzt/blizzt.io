@@ -1,7 +1,7 @@
 // Dependencies
 import React from 'react';
-import useSWR from 'swr';
 import { useRouter } from 'next/router';
+import { useQuery } from '@apollo/react-hooks';
 
 // Templates
 import ProjectDetailsTemplate from '@templates/projects/ProjectDetails';
@@ -9,15 +9,22 @@ import ProjectDetailsTemplate from '@templates/projects/ProjectDetails';
 // Containers
 import MarkdownViewContainer from '@containers/MarkdownViewContainer';
 
+// API
+import { GET_PROJECT_DETAILS } from '@api/project';
+
 function ProjectDetails() {
   // Hooks
   const router = useRouter();
   const { projectId } = router.query;
 
   // Project Data
-  const { data: project = null } = useSWR(`/projects/${projectId}`);
+  const { data: { project } = {}, loading } = useQuery(GET_PROJECT_DETAILS, {
+    variables: {
+      id: projectId
+    }
+  });
 
-  if (!project) {
+  if (loading) {
     return null;
   }
 

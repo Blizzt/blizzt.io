@@ -41,7 +41,7 @@ export const Container = styled.div`
   border-radius: 0 0 8px 8px;
   border: 1px solid ${common.colors.PRIMARY};
   border-top-color: transparent;
-	transition: 200ms;
+	transition: all 150ms;
 `;
 
 export const List = styled.ul`

@@ -1,10 +1,9 @@
 // Dependencies
 import React, { useCallback } from 'react';
-import { useRouter } from 'next/router';
-import useSWR from 'swr';
 import { useWeb3React } from '@web3-react/core';
 import usePersonalSign from '@hooks/usePersonalSign';
 import { verifyMessage } from '@ethersproject/wallet';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 
 // Templates
 import EditMyProjectTemplate from '@templates/projects/ProjectEdit';
@@ -17,15 +16,16 @@ import BasicEditForm from '@components/forms/edit-projects/BasicEditForm';
 import { PageMargin } from '@styled-components/pagination';
 
 // API
-import ProjectAPI from '@api/project';
+import { EDIT_PROJECT, GET_PROJECT_DETAILS_FOR_EDIT } from '@api/project';
 
-function EditMyProjectDetails() {
-  // Hooks
-  const router = useRouter();
-  const { projectId } = router.query;
+function EditMyProjectDetails({ projectId }) {
+  const [editProject] = useMutation(EDIT_PROJECT);
 
-  // Project Data
-  const { data: project = null, mutate } = useSWR(`/projects/${projectId}`);
+  const { data: { project } = {}, loading } = useQuery(GET_PROJECT_DETAILS_FOR_EDIT, {
+    variables: {
+      id: projectId
+    }
+  });
 
   // Hooks
   const { account, chainId } = useWeb3React();
@@ -39,27 +39,23 @@ function EditMyProjectDetails() {
 
       // 2. Verify Data Signed and Signature
       if (verifyMessage(dataToSign, signature) === account) {
-        await mutate(`/projects/${projectId}`, {
-          ...project,
-          ...values
-        }, false);
-
-        const response = await ProjectAPI.edit(project._id, {
-          ...values,
-          signature,
-          dataToSign
-        });
-
-        if (response && response.statusCode === 200) {
+        editProject({
+          variables: {
+            id: projectId,
+            data: {
+              title: values.title,
+              photoUrl: values.photoUrl,
+              categoryId: values.categoryId,
+              description: values.description
+            }
+          }
+        }).then(() => {
           actionButtonRef.changeToComplete('Changes are saved');
-
           formikHelpers.resetForm({
             values,
             isValidating: false
           });
-        }
-
-        await mutate(`/projects/${projectId}`);
+        });
       } else {
         return new Error({
           code: 1,
@@ -73,11 +69,6 @@ function EditMyProjectDetails() {
           formikHelpers.setSubmitting(false);
           break;
         }
-        case 1: {
-          actionButtonRef.changeToError(e.message);
-          formikHelpers.setSubmitting(false);
-          break;
-        }
         default: {
           actionButtonRef.changeToError('Changes not applied');
           formikHelpers.setSubmitting(false);
@@ -87,14 +78,14 @@ function EditMyProjectDetails() {
     }
   }, [project, projectId, account, chainId]);
 
-  if (!project) {
+  if (loading) {
     return null;
   }
 
   return (
     <EditMyProjectTemplate
       project={project}
-      title={`${project.name} - Edit project details`}>
+      title={`${project.title} - Edit project details`}>
       <SectionTitle
         title={'Basic information about your project'}
         description={'From here you can modify all the essential information about your project, such as its name, cover image and more.'}>
@@ -102,9 +93,9 @@ function EditMyProjectDetails() {
           <BasicEditForm
             project={project}
             initialValues={{
-              name: project.name,
-              photo: project.photo,
-              categoryId: project.categoryId,
+              title: project.title,
+              photoUrl: project.photoUrl,
+              categoryId: project.category.id,
               description: project.description
             }}
             onSubmit={onEditProjectDetails}
@@ -113,6 +104,14 @@ function EditMyProjectDetails() {
       </SectionTitle>
     </EditMyProjectTemplate>
   );
+}
+
+export async function getServerSideProps({ params: { projectId } }) {
+  return {
+    props: {
+      projectId
+    }
+  };
 }
 
 export default EditMyProjectDetails;

@@ -9,9 +9,6 @@ import {
 } from './styles';
 import { Medium } from '@styled-components/text';
 
-// Types
-import { categories } from '@types/categories';
-
 // Components
 import InputText from '@components/inputs/TextInput';
 import MainSelector from '@components/selectors/MainSelector';
@@ -19,6 +16,7 @@ import InputFile from '@components/inputs/InputFile';
 import FormColumn from '@forms-components/FormColumn';
 import FormFooter from '@forms-components/FormFooter';
 import Button, { buttonTypesId } from '@components/buttons/MainButton';
+import Fetch from '@components/utils/Fetch';
 
 // Hooks
 import useFormValidation from '../../../../hooks/useFormValidation';
@@ -30,11 +28,14 @@ import { SaveOutline } from 'react-ionicons';
 import validationSchema from './validation';
 import { common } from '@styled-components/common';
 
+// API:
+import { GET_ALL_CATEGORIES } from '@api/category';
+
 function BasicEditForm({
   project,
   initialValues: {
-    name,
-    photo,
+    title,
+    photoUrl,
     categoryId,
     description
   },
@@ -46,12 +47,11 @@ function BasicEditForm({
   // Formik
   const formik = useFormik({
     initialValues: {
-    	name,
-      photo,
+      title,
+      photoUrl,
       categoryId,
       description
     },
-    enableReinitialize: true,
     validationSchema,
     onSubmit: (values, formikHelpers) => {
       onSubmit(values, formikHelpers, actionButtonRef.current);
@@ -69,12 +69,12 @@ function BasicEditForm({
 			fields={[
 				<InputText
 					key={'1'}
-					label={'Name'}
-					error={getErrorFromField('name')}
-					placeholder={project.name}
+					label={'Title'}
+					error={getErrorFromField('title')}
+					placeholder={project.title}
 					maxLength={32}
-					value={formik.values.name}
-					onChangeText={name => changeValue('name', name)}
+					value={formik.values.title}
+					onChangeText={title => changeValue('title', title)}
 				/>,
 				<InputText
 					key={'2'}
@@ -88,7 +88,7 @@ function BasicEditForm({
 				/>
 			]}
 		/>
-  ), [project, formik.values.name, formik.values.description]);
+  ), [project, formik.values.title, formik.values.description]);
 
   const renderCategory = useMemo(() => (
 		<FormColumn
@@ -99,12 +99,18 @@ function BasicEditForm({
 			  'You’ll be able to change the category and subcategory even after your project is live.'
 			]}
 			fields={[
-				<MainSelector
-					key={'1'}
-					items={categories}
-					selected={formik.values.categoryId}
-					value={formik.values.categoryId}
-					onChange={category => changeValue('categoryId', category.id)}
+				<Fetch
+					key={'category'}
+					gql={GET_ALL_CATEGORIES}
+					onRender={({ categories }) => (
+						<MainSelector
+							items={categories}
+							isSubmitting={formik.isSubmitting}
+							error={getErrorFromField('categoryId')}
+							selected={formik.values.categoryId}
+							onChange={category => changeValue('categoryId', category.id)}
+						/>
+					)}
 				/>
 			]}
 		/>
@@ -121,15 +127,15 @@ function BasicEditForm({
 			fields={[
 				<InputFile
 					key={'1'}
-					error={getErrorFromField('photo')}
-					value={formik.values.photo}
+					error={getErrorFromField('photoUrl')}
+					value={formik.values.photoUrl}
 					onChange={({ file }) => {
-					  changeValue('photo', file);
+					  changeValue('photoUrl', file);
 					}}
 				/>
 			]}
 		/>
-  ), [formik.values.photo]);
+  ), [formik.values.photoUrl]);
 
   return (
 		<Layout onSubmit={formik.handleSubmit}>
