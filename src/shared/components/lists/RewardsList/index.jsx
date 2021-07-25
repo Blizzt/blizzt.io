@@ -10,21 +10,31 @@ import {
 
 // Components
 import NFTCard from '../../cards/NFTCard';
+import IPFSFetch from '@components/utils/IPFSFetch';
 
 function RewardsList({ onClick = () => {}, collectibles = [] }) {
   const renderCollectiblesList = useMemo(() => (
 		<List>
-			{collectibles.map(({ metadata: { name, description, image }, ...item }, index) => (
-				<NFTCard
-					key={`--nft-item-${index.toString()}`}
-					pictureUrl={image}
-					title={name}
-					description={description}
-					forSale={item.forSale}
-					forRent={item.forRent}
-					units={item.mintedAmount}
-					onClick={() => onClick(item)}
-				/>
+			{collectibles.map((item, index) => (
+			  <IPFSFetch
+          key={`--nft-item-${index.toString()}`}
+          endpoint={item.IPFSAddress}
+          metadata={item.metadata}
+          onRender={({ data }) => (
+            <>
+              {console.log({ data })}
+              <NFTCard
+                pictureUrl={data.image}
+                title={data.name}
+                description={data.description}
+                forSale={item.forSale}
+                forRent={item.forRent}
+                units={item.mintedAmount}
+                onClick={() => onClick(item)}
+              />
+            </>
+          )}
+        />
 			))}
 		</List>
   ), [collectibles]);

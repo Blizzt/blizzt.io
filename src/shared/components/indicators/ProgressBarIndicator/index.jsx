@@ -18,6 +18,8 @@ import {
 import { common } from '@styled-components/common';
 
 function ProgressBarIndicator({
+  color = common.colors.PRIMARY,
+  indicatorColor = common.colors.PRIMARY,
   max = 50,
   current = 25,
   label = () => {}
@@ -33,14 +35,14 @@ function ProgressBarIndicator({
   const value = label(max, current);
 
   return (
-    <Layout>
+    <Layout color={color} indicatorColor={indicatorColor}>
       {(label && typeof label === 'function') && (
         <Block>
           <Icon>
             <DiceOutline
               width={'22px'}
               height={'22px'}
-              color={common.colors.PRIMARY}
+              color={color}
             />
           </Icon>
           <Label>

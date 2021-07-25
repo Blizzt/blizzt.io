@@ -27,7 +27,7 @@ export const CREATE_PROJECT = gql`
 export const EDIT_PROJECT = gql`
   mutation EditProject(
     $id: ID!
-    $data: ProjectInput!
+    $data: EditProjectInput!
   ) {
     editProject(
       id: $id
@@ -77,14 +77,135 @@ export const GET_PROJECT_DETAILS_FOR_EDIT = gql`
   }
 `;
 
-export const GET_PROJECT_DETAILS = gql`
-  query GetProject($id: String!) {
+export const GET_PROJECT_PAPER = gql`
+  query GetProject($id: ID!) {
     project(id: $id) {
       id
       title
+      chainId
       description
       isPublic
       photoUrl
+      createdAt
+      document
+      
+      details {
+        web
+        steam
+        xbox
+        playstation
+        android
+        ios
+        kickstarter
+        instagram
+        youtube
+        twitch
+        twitter
+        facebook
+        vk
+        discord
+        reddit
+        telegram
+      }
+      
+      creator {
+        id
+        address
+        username
+        photoUrl
+      }
+    }
+  }
+`;
+
+export const GET_PROJECT_DETAILS = gql`
+  query GetProject($id: ID!) {
+    project(id: $id) {
+      id
+      title
+      chainId
+      description
+      isPublic
+      photoUrl
+      createdAt
+           
+      creator {
+        id
+        address
+        username
+        photoUrl
+      }
+    }
+  }
+`;
+
+export const GET_PROJECT_COLLECTIBLES = gql`
+  query GetProject($id: ID!) {
+    project(id: $id) {
+      id
+      title
+      chainId
+      description
+      isPublic
+      photoUrl
+      createdAt
+      
+      nfts {
+        id
+        nftId
+        IPFSAddress
+        metadata
+      }
+           
+      creator {
+        id
+        address
+        username
+        photoUrl
+      }
+    }
+  }
+`;
+
+export const GET_COLLECTIBLE = gql`
+  query GetNFT($projectId: ID!, $nftId: Int!) {
+    nft(projectId: $projectId, nftId: $nftId) {
+      id
+      type
+      IPFSAddress
+      metadata
+      
+      creator {
+        address
+        username
+        photoUrl
+      }
+      
+      forRent {
+        type
+        from
+        to
+        quantity
+        price
+        currency
+      }
+      
+      forSale {
+        type
+        from
+        to
+        quantity
+        price
+        currency
+      }
+  
+      project {
+        id
+        title
+        description
+        photoUrl
+        createdAt
+      }
     }
   }
 `;
@@ -167,7 +288,7 @@ const ProjectAPI = {
       // TODO: Jorge, esto debería volver los metadatos de IPFS.
       await Promise.all(
         ids.map(async(collectible) => {
-          console.log('COLLECTIBLES', collectible);
+          response.log('COLLECTIBLES', collectible);
           const meta = collectible.metadata;
           const data = await IPFS.get(meta); // TODO: Esto devuelve un generador "suspended"
 

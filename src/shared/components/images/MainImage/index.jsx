@@ -6,13 +6,15 @@ import {
   Layout,
   Source
 } from './styles';
+
+// Types
 import { imageAspectRatio } from '@types/images';
 
 function MainImage({
+  alt,
   source,
-  aspectRatio = imageAspectRatio.SIXTEEN,
   radius = 0,
-  alt
+  aspectRatio = imageAspectRatio.SIXTEEN
 }, ref) {
   return (
 		<Layout aspectRatio={aspectRatio} radius={radius}>

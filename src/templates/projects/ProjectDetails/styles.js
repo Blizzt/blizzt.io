@@ -6,7 +6,10 @@ import { common } from '@styled-components/common';
 
 export const styles = {
   navigationList: {
-    boxShadow: 'rgb(226 229 231) 0px -12px 10px -9px'
+    borderLeft: `1px dashed ${common.colors.GRAY_SEMI_LIGHT}`
+  },
+  fundingIndicator: {
+    marginTop: '2rem'
   }
 };
 
@@ -93,23 +96,21 @@ export const Description = styled.p`
 
 export const Body = styled.div`
   display: grid;
-  grid-template-columns: 1fr;
-	grid-column-gap: 32px;
-	grid-row-gap: 32px;
+  grid-template-columns: 1fr 0.4fr;
 	padding: 8px;
+  box-shadow: rgb(226 229 231) 0px -12px 10px -9px;
 `;
 
 export const Author = styled.div`
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-  border-bottom: 1px dashed #d4d4d4;
-  padding-bottom: 14px;
-	margin-bottom: 14px;
 `;
 
 export const AuthorImage = styled.div`
 	overflow: hidden;
+  width: 38px;
+  height: 38px;
 	border-radius: 100%;
 `;
 
@@ -118,5 +119,27 @@ export const AuthorLabel = styled.span`
 	font-size: 14px;
   display: flex;
   flex-grow: 1;
+  flex-direction: column;
 	color: ${common.colors.PRIMARY};
+  
+`;
+
+export const Address = styled.a`
+  display: inline;
+  color: black !important;
+  font-size: 11px;
+  margin-top: 4px;
+  
+  &:before {
+    content: "[";
+  }
+  
+  &:after {
+    content: "]";
+  }
+`;
+
+export const FundingImage = styled.img`
+  width: 48px;
+  height: 48px;
 `;

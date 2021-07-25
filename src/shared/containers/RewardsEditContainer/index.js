@@ -121,7 +121,7 @@ function RewardsEditContainer({ project, collectibles = [], handleNFTCreationSub
 				<FormContainer style={creationFormStyle} ref={creationForm}>
 					<PageMargin>
             <RewardsForm
-              projectId={project._id}
+              projectId={project.id}
               onSubmit={onSubmitCollectible}
               onCancel={handleNFTCreationCancel}
             />

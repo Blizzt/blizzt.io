@@ -4,24 +4,39 @@ import React from 'react';
 // Assets
 import {
   NewspaperOutline,
-  DiceOutline
+  DiceOutline,
+  ImagesOutline,
+  MegaphoneOutline,
+  InformationCircleOutline
 } from 'react-ionicons';
 
 export const sectionTypesId = {
   BIO: 'bio',
+  DETAILS: 'details',
   COLLECTIBLES: 'collectibles',
   NEWS: 'news',
-  GALLERY: 'gallery',
-  ANALYTICS: 'analytics'
+  GALLERY: 'gallery'
 };
 
 export const sectionList = [
   {
     id: sectionTypesId.BIO,
     path: '',
-    label: 'Information',
+    label: 'Paper',
     icon: (
       <NewspaperOutline
+        width={'20px'}
+        height={'20px'}
+      />
+    )
+  },
+
+  {
+    id: sectionTypesId.DETAILS,
+    path: '/details',
+    label: 'Project Details',
+    icon: (
+      <InformationCircleOutline
         width={'22px'}
         height={'22px'}
       />
@@ -38,15 +53,14 @@ export const sectionList = [
         height={'22px'}
       />
     )
-  }
-/*
+  },
   {
     id: sectionTypesId.NEWS,
-    label: 'News',
+    label: 'Latest news',
     icon: (
       <MegaphoneOutline
-        width={'22px'}
-        height={'22px'}
+        width={'20px'}
+        height={'20px'}
       />
     )
   },
@@ -55,19 +69,9 @@ export const sectionList = [
     label: 'Photos & Videos',
     icon: (
       <ImagesOutline
-        width={'22px'}
-        height={'22px'}
+        width={'20px'}
+        height={'20px'}
       />
     )
-  },
-  {
-    id: sectionTypesId.ANALYTICS,
-    label: 'Analytics',
-    icon: (
-      <AnalyticsOutline
-        width={'22px'}
-        height={'22px'}
-      />
-    )
-  } */
+  }
 ];

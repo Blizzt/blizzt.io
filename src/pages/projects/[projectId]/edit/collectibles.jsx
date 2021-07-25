@@ -1,8 +1,7 @@
 // Dependencies
-import React, { useCallback, useMemo } from 'react';
-import useSWR from 'swr';
-import { useRouter } from 'next/router';
+import React, { useCallback } from 'react';
 import { useWeb3React } from '@web3-react/core';
+import { useQuery } from '@apollo/react-hooks';
 
 // Templates
 import EditMyProjectTemplate from '@templates/projects/ProjectEdit';
@@ -12,24 +11,25 @@ import SectionTitle from '@components/titles/SectionTitle';
 import RewardsEditContainer, { modeTypesId } from '@containers/RewardsEditContainer';
 
 // API
-import ProjectAPI from '@api/project';
 import CollectibleAPI from '@api/collectible';
+import { GET_PROJECT_COLLECTIBLES } from '@api/project';
 
 // Hooks
 import { useTheme } from '@styled-components/index';
+
+// Types
 import { modalTypesId } from '@types/ui';
 
-function EditMyProjectCollectibles(props) {
-  // Hooks
-  const router = useRouter();
-  const { projectId } = router.query;
-
+function EditMyProjectCollectibles({ projectId }) {
   const { openModal, closeModal } = useTheme();
   const { chainId, account } = useWeb3React();
 
   // Project Data
-  const { data: project = null } = useSWR(`/projects/${projectId}`, { initialData: props.project });
-  const { data: collectibles } = useSWR(null, ProjectAPI.getCollectibles(project.nftCollectionAddress));
+  const { data: { project } = {}, loading } = useQuery(GET_PROJECT_COLLECTIBLES, {
+    variables: {
+      id: projectId
+    }
+  });
 
   const handleNFTCreationSubmit = useCallback(async(collectible, formikHelpers, actionButtonRef, setMode) => {
     await openModal(modalTypesId.CREATE_MY_COLLECTIBLE_PROCESS);
@@ -42,21 +42,21 @@ function EditMyProjectCollectibles(props) {
     await setMode(modeTypesId.VIEWING_MODE);
   }, [chainId, account, projectId]);
 
-  if (!project) {
+  if (loading) {
     return null;
   }
 
   return (
     <EditMyProjectTemplate
       project={project}
-      title={`${project.name} - Edit collectibles`}
+      title={`${project.title} - Edit collectibles`}
     >
       <SectionTitle
         title={'Add the NFTs that will help you raise funds.'}
         description={'Offer simple, meaningful ways to bring backers closer to your project and celebrate it coming to life.'}>
         <RewardsEditContainer
           project={project}
-          collectibles={collectibles}
+          collectibles={project.nfts}
           handleNFTCreationSubmit={handleNFTCreationSubmit}
         />
       </SectionTitle>
@@ -65,11 +65,9 @@ function EditMyProjectCollectibles(props) {
 }
 
 export async function getServerSideProps({ params: { projectId } }) {
-  const { data: project } = await ProjectAPI.getById(projectId);
-
   return {
     props: {
-      project
+      projectId
     }
   };
 }

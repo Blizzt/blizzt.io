@@ -47,8 +47,7 @@ import ProjectSummaryCard from '@components/cards/ProjectSummaryCard';
 function CollectibleDetailsTemplate({
   title,
   project,
-  collectible,
-  onClickProjectDetails = () => {}
+  collectible
 }) {
   const { account } = useWeb3React();
 
@@ -180,10 +179,10 @@ function CollectibleDetailsTemplate({
             </LinearGrid>
             <LinearGrid>
               <ProjectSummaryCard
-                name={project.name}
+                name={project.title}
                 collectiblesCount={project.collectiblesCount}
                 onClick={() => {}}
-                pictureUrl={project.photo}
+                pictureUrl={project.photoUrl}
               />
               <Block>
                 <NFTActionCard

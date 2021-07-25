@@ -21,6 +21,7 @@ const common = {
     GRAY_HARD: '#767a82',
 
     GREEN: '#5DD246',
+    GREEN_SOFT: '#5da351',
     GREEN_LIGHT: '#e7f9e3',
 
     RED: '#e86060',

@@ -1,6 +1,5 @@
 // Dependencies
 import React, { useCallback, useMemo } from 'react';
-import Blockies from 'react-blockies-image';
 import { useRouter } from 'next/router';
 import { useWeb3React } from '@web3-react/core';
 
@@ -19,33 +18,42 @@ import {
   Body,
 
   Author,
+  Address,
   AuthorLabel,
   AuthorImage,
   ContainerInner,
   TopContainer,
+  FundingImage,
 
   styles
 
 } from './styles';
-import { common } from '@styled-components/common';
+
+// Assets
+import MoneyThree from '@assets/images/money-three.svg';
 
 // Components
 import NavigationList from '@components/lists/NavigationList';
 import ProgressBarIndicator from '@components/indicators/ProgressBarIndicator';
 import MainImage from '@components/images/MainImage';
 import MainButton, { buttonTypesId } from '@components/buttons/MainButton';
+import ProfileImage from '@components/images/ProfileImage';
+import FundingIndicator from '@components/indicators/FundingIndicator';
 
 // Utils
-import { shortenHex } from '@utils/web3';
+import { formatEtherscanLink, shortenHex } from '@utils/web3';
 import { sectionList } from './utils';
+
+// Types
+import { imageAspectRatio } from '@types/images';
 
 // Layouts
 import PageLayout from '@layouts/PageLayout';
+import { common } from '@styled-components/common';
 
 function ProjectDetailsTemplate({
-  project = {},
-  children,
-  title = null
+  project,
+  children
 }) {
   // Hooks
   const router = useRouter();
@@ -59,7 +67,7 @@ function ProjectDetailsTemplate({
    * @description Variable that determines if the project is owned by the logged in user.
    */
   const isOwnerOfProject = useMemo(() =>
-    project && project.ownerAddress === account,
+    project && project.creator.address === account,
   [account, project]);
 
   /**
@@ -67,29 +75,31 @@ function ProjectDetailsTemplate({
    * @description Function that is triggered by pressing edit projects.
    */
   const onClickEditMyProject = useCallback(() => {
-    router.push(`/projects/${project._id}/edit`);
+    router.push(`/projects/${project.id}/edit`);
   }, [project]);
 
   const renderLeftSide = useMemo(() => (
     <Left>
       <ContainerInner>
         <Header>
-          <MainImage radius={6} source={project.photo} />
+          <MainImage radius={6} source={project.photoUrl} />
           <Data>
-            <Title>{project.name}</Title>
+            <Title>{project.title}</Title>
             <Description>{project.description}</Description>
             <Author>
               <AuthorImage>
-                <Blockies
-                  seed={project.ownerAddress ?? ''}
-                  size={10}
-                  color={common.colors.PRIMARY_LIGHT}
-                  bgColor={common.colors.PRIMARY}
-                  spotColor={common.colors.PRIMARY}
+                <ProfileImage
+                  source={project.creator.photoUrl}
+                  address={project.creator.address}
+                  aspectRatio={imageAspectRatio.ONE}
+                  alt={project.creator.address}
                 />
               </AuthorImage>
               <AuthorLabel>
-                Created by {isOwnerOfProject ? 'You' : shortenHex(project.ownerAddress, 4)}
+                Created by {project.creator.username}
+                <Address target={'_blank'} href={formatEtherscanLink('Account', project.chainId, project.creator.address)}>
+                  {shortenHex(project.creator.address, 4)}
+                </Address>
               </AuthorLabel>
 
               {isOwnerOfProject && (
@@ -101,10 +111,22 @@ function ProjectDetailsTemplate({
               )}
             </Author>
 
-            <ProgressBarIndicator
-              max={project.collectiblesCount}
-              current={project.collectiblesSold}
-              label={(max, current) => `${current} NFT have been sold out of the total of ${max} required`}
+            <FundingIndicator
+              customStyleContainer={styles.fundingIndicator}
+              icon={
+                <FundingImage src={MoneyThree} alt={'Funding Status'} />
+              }
+              max={250000}
+              current={100000}
+              bottom={(
+                <ProgressBarIndicator
+                  color={common.colors.GREEN_SOFT}
+                  indicatorColor={common.colors.GREEN}
+                  max={project.collectiblesCount}
+                  current={project.collectiblesSold}
+                  label={(max, current) => `${current} NFT have been sold out of the total of ${max} required`}
+                />
+              )}
             />
           </Data>
         </Header>
@@ -119,25 +141,26 @@ function ProjectDetailsTemplate({
   ), [project]);
 
   return (
-    <PageLayout title={title ?? project.name}>
-      <Layout background={project.photo}>
+    <PageLayout title={`${project.title} - Blizzt.io`}>
+      <Layout background={project.photoUrl}>
         <Container>
           <TopContainer>
             {renderLeftSide}
             {renderRightSide}
-
-            {/* Navigation List */}
-            <NavigationList
-              data={sectionList}
-              customStyleContainer={styles.navigationList}
-              baseUrl={`/projects/${project._id}`}
-            />
           </TopContainer>
           <Body>
             {/* Navigator Container */}
             <ContainerInner>
               {children}
             </ContainerInner>
+
+            {/* Navigation List */}
+            <NavigationList
+              title={'About the project'}
+              data={sectionList}
+              customStyleContainer={styles.navigationList}
+              baseUrl={`/projects/${project.id}`}
+            />
           </Body>
         </Container>
       </Layout>

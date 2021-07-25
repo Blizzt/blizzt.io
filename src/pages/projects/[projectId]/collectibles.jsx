@@ -1,7 +1,7 @@
 // Dependencies
 import React, { useCallback } from 'react';
 import { useRouter } from 'next/router';
-import useSWR from 'swr';
+import { useQuery } from '@apollo/react-hooks';
 
 // Templates
 import ProjectDetailsTemplate from '@templates/projects/ProjectDetails';
@@ -9,21 +9,31 @@ import ProjectDetailsTemplate from '@templates/projects/ProjectDetails';
 // Components
 import RewardsList from '@components/lists/RewardsList';
 
-function ProjectDetailsCollectibles() {
+// API
+import { GET_PROJECT_COLLECTIBLES } from '@api/project';
+
+function ProjectDetailsCollectibles({ projectId }) {
   // Hooks
   const router = useRouter();
-  const { projectId } = router.query;
 
   // Project Data
-  const { data: project = {} } = useSWR(`/projects/${projectId}`);
+  const { data: { project } = {}, loading } = useQuery(GET_PROJECT_COLLECTIBLES, {
+    variables: {
+      id: projectId
+    }
+  });
 
   /**
    * @function onClickCollectible():
    * @description Function that is triggered by pressing edit collectible.
    */
   const onClickCollectible = useCallback((item) => {
-    router.push(`/projects/${projectId}/collectibles/${item.id}`);
+    router.push(`/projects/${projectId}/${item.id}`);
   }, []);
+
+  if (loading) {
+    return null;
+  }
 
   return (
     <ProjectDetailsTemplate
@@ -31,11 +41,19 @@ function ProjectDetailsCollectibles() {
       title={`${project.name} - Collectibles`}
     >
       <RewardsList
-        collectibles={project.collectibles}
+        collectibles={project.nfts}
         onClick={onClickCollectible}
       />
     </ProjectDetailsTemplate>
   );
+}
+
+export async function getServerSideProps({ params: { projectId } }) {
+  return {
+    props: {
+      projectId
+    }
+  };
 }
 
 export default ProjectDetailsCollectibles;

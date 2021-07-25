@@ -128,7 +128,7 @@ const Account = ({ triedToEagerConnect }) => {
             <>
               <ProfileAction onClick={onClickUserAccount}>
                 <ImageSource>
-                  {error || !me?.photoUrl ? (
+                  {error || (me && !me.photoUrl) ? (
                     <Blockies
                       seed={account}
                       size={10}

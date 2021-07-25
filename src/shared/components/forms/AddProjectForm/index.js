@@ -92,16 +92,13 @@ function CreateProjectForm({
 						key={'category'}
 						gql={GET_ALL_CATEGORIES}
 						onRender={({ categories }) => (
-							<>
-								<MainSelector
-									key={'category'}
-									items={categories}
-									isSubmitting={formik.isSubmitting}
-									error={getErrorFromField('categoryId')}
-									selected={formik.values.categoryId}
-									onChange={category => changeValue('categoryId', category.id)}
-								/>
-							</>
+							<MainSelector
+								items={categories}
+								isSubmitting={formik.isSubmitting}
+								error={getErrorFromField('categoryId')}
+								selected={formik.values.categoryId}
+								onChange={category => changeValue('categoryId', category.id)}
+							/>
 						)}
 					/>
 				]}

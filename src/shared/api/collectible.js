@@ -1,10 +1,12 @@
 // Dependencies
+import gql from 'graphql-tag';
+import { NetworkStatus } from 'apollo-client';
 import { getUnixTime } from 'date-fns';
 import Web3 from 'web3';
 
 // API
-import ProjectAPI from '@api/project';
-import fetchAPI from '@utils/api';
+import ProjectAPI, { GET_PROJECT_DETAILS } from '@api/project';
+import createApolloClient from '../../../apollo.client';
 
 // Utils
 import { getDisplayType, IPFS } from '@utils/web3';
@@ -14,12 +16,46 @@ import Addresses from '@contracts/addresses';
 import NFTCollection from '@contracts/abis/NFTCollection.json';
 import NFTCollectionFactory from '@contracts/abis/NFTCollectionFactory.json';
 
+export const MINT_NFT = gql`
+  mutation MintNFT(
+    $projectId: ID!
+    $type: NFTType
+    $nftId: Int!
+    $collectionAddress: String!
+    $metadata: String!
+    $IPFSAddress: String!
+    $amount: Int!
+  ) {
+    mintNFT(
+      projectId: $projectId
+      type: $type
+      nftId: $nftId
+      collectionAddress: $collectionAddress
+      metadata: $metadata
+      IPFSAddress: $IPFSAddress
+      amount: $amount
+    ) {
+      nftId,
+      project {
+        title
+      }
+    }
+  }
+`;
+
 const CollectibleAPI = {
   create: async({ chainId, projectId, collectible }) => {
+    const apollo = createApolloClient();
     const web3 = new Web3(window.ethereum);
-    const { statusCode, data: project } = await ProjectAPI.getById(projectId);
 
-    if (statusCode !== 200 || !project) {
+    const { networkStatus, data: { project } = {} } = await apollo.query({
+      query: GET_PROJECT_DETAILS,
+      variables: {
+        id: projectId
+      }
+    });
+
+    if (networkStatus === NetworkStatus.error) {
       throw new Error({
         message: 'This project not exists'
       });
@@ -70,10 +106,10 @@ const CollectibleAPI = {
     const metadataCidIpfs = `${metadataCid.path}`;
 
     let nftId = 1;
-    let nftAddress = '';
+    let collectionAddress = '';
 
-    if (project.nftCollectionAddress) {
-      const ntfsResponse = await ProjectAPI.getNFTIds(project.nftCollectionAddress);
+    if (project.collectionAddress) {
+      const ntfsResponse = await ProjectAPI.getNFTIds(project.collectionAddress);
 
       if (!ntfsResponse || ntfsResponse.statusCode !== 200) {
         throw new Error({
@@ -89,14 +125,14 @@ const CollectibleAPI = {
         methods: {
           mint
         }
-      } = new web3.eth.Contract(NFTCollection, project.nftCollectionAddress);
+      } = new web3.eth.Contract(NFTCollection, project.collectionAddress);
 
       const mintItem = await mint(window.ethereum.selectedAddress, nftId, collectible.amount, metadataCidIpfs);
       const tx = await mintItem.send({
         from: window.ethereum.selectedAddress
       });
 
-      nftAddress = project.nftCollectionAddress;
+      collectionAddress = project.collectionAddress;
     } else {
       let tx = {};
 
@@ -132,29 +168,24 @@ const CollectibleAPI = {
           console.log('error:', error);
         });
 
-      await ProjectAPI.edit(project._id, {
-        dataToSign: '',
-        signature: '',
-        nftCollectionAddress: tokenAddress,
-        tx: tx
-      });
-
-      nftAddress = tokenAddress;
+      collectionAddress = tokenAddress;
     }
 
-    const ipfsAddress = `ipfs://${metadataCidIpfs}`;
+    const IPFSAddress = `ipfs://${metadataCidIpfs}`;
 
-    return await fetchAPI({
-      endPoint: '/nfts',
-      method: 'POST',
-      body: {
-        nftCollectionAddress: nftAddress,
+    await apollo.mutate({
+      mutation: MINT_NFT,
+      variables: {
         nftId,
-        metadataJson: JSON.stringify(metadata),
-        metadata: ipfsAddress,
-        mintedAmount: collectible.amount
+        projectId,
+        collectionAddress,
+        metadata: JSON.stringify(metadata),
+        IPFSAddress,
+        amount: collectible.amount
       }
     });
+
+    return true;
   }
 };
 

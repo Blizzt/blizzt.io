@@ -2,9 +2,13 @@
 import styled from 'styled-components';
 import { common } from '@styled-components/common';
 
-export const List = styled.nav`
-	display: grid;
-	grid-template-columns: repeat(${props => props.columns}, minmax(0%, 100%));
+export const List = styled.ul`
+	display: flex;
+  flex-direction: column;
+`;
+
+export const ListItem = styled.li`
+  padding: 8px 16px;
 `;
 
 export const Label = styled.div`
@@ -18,18 +22,18 @@ export const Icon = styled.div`
 `;
 
 export const Item = styled.a`
-  padding: 14px 18px;
-  min-height: 64px;
+  padding: 16px 18px;
   cursor: pointer;
   user-select: none;
   display: flex;
   flex-direction: row;
   align-items: center;
-	justify-content: center;
+  border-radius: 2px;
+
 	color: ${common.colors.BLACK};
-  border-bottom-width: 4px;
-	border-bottom-style: solid;
-	border-bottom-color: transparent;
+  border-left-width: 4px;
+	border-left-style: solid;
+	border-left-color: transparent;
 	transition: all 0.1s ease-in-out;
 	
   &:hover {
@@ -37,8 +41,8 @@ export const Item = styled.a`
   }
 	
 	&.selected {
-		border-bottom-width: 4px;
-    border-bottom-color: ${common.colors.PRIMARY};
+		border-left-width: 4px;
+    border-left-color: ${common.colors.PRIMARY};
     background: #f2f3f5;
 		color: ${common.colors.PRIMARY};
 		
@@ -48,3 +52,13 @@ export const Item = styled.a`
 		}
 	}
 `;
+
+export const Title = styled.h3`
+  font-size: 12px;
+  text-transform: uppercase;
+  padding: 16px;
+  font-family: ${common.fonts.MEDIUM};
+  color: ${common.colors.PRIMARY_DARKEN};
+`;
+
+export const Layout = styled.div``;

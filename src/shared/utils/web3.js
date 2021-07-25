@@ -32,10 +32,9 @@ const ETHERSCAN_PREFIXES = {
  * @param {("Account"|"Transaction")} type
  * @param {[number, string]} data
  */
-export function formatEtherscanLink(type, data) {
+export function formatEtherscanLink(type, chainId, address) {
   switch (type) {
     case 'Account': {
-      const [chainId, address] = data;
       return `https://${ETHERSCAN_PREFIXES[chainId]}etherscan.io/address/${address}`;
     }
     case 'Transaction': {

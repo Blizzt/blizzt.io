@@ -6,28 +6,39 @@ import ActiveLink from '@components/links/ActiveLink';
 
 // Styled Components
 import {
+  Layout,
   List,
+  ListItem,
   Item,
   Label,
-  Icon
+  Icon,
+  Title
 } from './styles';
 
-function NavigationList({ customStyleContainer = {}, data = [], baseUrl = '/' }, ref) {
+function NavigationList({
+  title = null,
+  customStyleContainer = {},
+  data = [],
+  baseUrl = '/'
+}, ref) {
   return (
-  	<List ref={ref} columns={data.length} style={customStyleContainer}>
-			{data.map((item, index) => (
-        <ActiveLink
-          activeClassName={'selected'}
-          key={`--section-item-key-${index.toString()}`}
-          href={`${baseUrl}${item.path}`}
-        >
-          <Item>
-            {item.icon && <Icon>{item.icon}</Icon>}
-            <Label>{item.label}</Label>
-          </Item>
-        </ActiveLink>
-			))}
-		</List>
+    <Layout style={customStyleContainer}>
+      {title && (<Title>{title}</Title>)}
+      <List ref={ref} columns={data.length}>
+        {data.map((item, index) => (
+          <ListItem key={`--section-item-key-${index.toString()}`}>
+            <ActiveLink
+              activeClassName={'selected'}
+              href={`${baseUrl}${item.path}`}>
+              <Item>
+                {item.icon && <Icon>{item.icon}</Icon>}
+                <Label>{item.label}</Label>
+              </Item>
+            </ActiveLink>
+          </ListItem>
+        ))}
+      </List>
+    </Layout>
   );
 }
 

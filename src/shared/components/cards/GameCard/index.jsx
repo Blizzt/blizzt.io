@@ -1,5 +1,6 @@
 // Dependencies
-import React, { useMemo } from 'react';
+import React from 'react';
+import Link from 'next/link';
 
 // Styled Components
 import {
@@ -12,20 +13,17 @@ import {
 // Components
 import MainImage from '@components/images/MainImage';
 
-// Types
-import { categories } from '@types/categories';
-
-function GameCard({ name, pictureUrl, categoryId = 12 }) {
-  const category = useMemo(() => categories.filter(e => e.id === categoryId)[0], [categoryId]);
-
+function GameCard({ id, name, pictureUrl, category }) {
   return (
-    <Layout>
-      <MainImage source={pictureUrl} alt={name} />
-      <Bottom>
-        <Title>{name}</Title>
-        <Category>{category.label}</Category>
-      </Bottom>
-    </Layout>
+    <Link href={`/projects/${id}`}>
+      <Layout>
+        <MainImage source={pictureUrl} alt={name} />
+        <Bottom>
+          <Title>{name}</Title>
+          <Category>{category.name}</Category>
+        </Bottom>
+      </Layout>
+    </Link>
   );
 }
 

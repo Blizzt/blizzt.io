@@ -1,6 +1,5 @@
 // Dependencies
 import React from 'react';
-import { useRouter } from 'next/router';
 import { useQuery } from '@apollo/react-hooks';
 
 // Templates
@@ -10,15 +9,11 @@ import ProjectDetailsTemplate from '@templates/projects/ProjectDetails';
 import MarkdownViewContainer from '@containers/MarkdownViewContainer';
 
 // API
-import { GET_PROJECT_DETAILS } from '@api/project';
+import { GET_PROJECT_PAPER } from '@api/project';
 
-function ProjectDetails() {
-  // Hooks
-  const router = useRouter();
-  const { projectId } = router.query;
-
+function ProjectDetails({ projectId }) {
   // Project Data
-  const { data: { project } = {}, loading } = useQuery(GET_PROJECT_DETAILS, {
+  const { data: { project } = {}, loading } = useQuery(GET_PROJECT_PAPER, {
     variables: {
       id: projectId
     }
@@ -33,6 +28,14 @@ function ProjectDetails() {
       <MarkdownViewContainer document={project.document} />
     </ProjectDetailsTemplate>
   );
+}
+
+export async function getServerSideProps({ params: { projectId } }) {
+  return {
+    props: {
+      projectId
+    }
+  };
 }
 
 export default ProjectDetails;

@@ -6,6 +6,7 @@ export const Layout = styled.div`
   user-select: none;
   overflow: hidden;
   border-radius: 4px;
+  cursor: pointer;
 `;
 
 export const Bottom = styled.div`

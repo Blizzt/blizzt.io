@@ -15,6 +15,11 @@ export const LATEST_PROJECTS = gql`
       id
       title
       photoUrl
+      
+      category {
+        id
+        name
+      }
     }
   }
 `;
