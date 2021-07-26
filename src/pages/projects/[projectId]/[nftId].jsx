@@ -20,8 +20,6 @@ function CollectibleDetails({ projectId, nftId }) {
     }
   });
 
-  console.log({ nft });
-
   if (loading) {
     return null;
   }

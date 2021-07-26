@@ -175,28 +175,14 @@ export const GET_COLLECTIBLE = gql`
       IPFSAddress
       metadata
       
-      creator {
-        address
-        username
-        photoUrl
-      }
-      
+      acquired 
+            
       forRent {
-        type
-        from
-        to
-        quantity
-        price
-        currency
+        state
       }
       
       forSale {
-        type
-        from
-        to
-        quantity
-        price
-        currency
+        state
       }
   
       project {

@@ -32,6 +32,7 @@ import Collapsible from '@components/foldouts/Collapsible';
 import MainTable from '@components/tables/MainTable';
 import TokenLabel from '@components/labels/TokenLabel';
 import NFTActionCard from '@components/cards/NFTActionCard';
+import ProjectSummaryCard from '@components/cards/ProjectSummaryCard';
 
 // Types
 import { imageAspectRatio } from '@types/images';
@@ -42,7 +43,6 @@ import { CartOutline, FlashOutline, HourglassOutline } from 'react-ionicons';
 // Utils
 import { shortenHex } from '@utils/web3';
 import { format, fromUnixTime } from 'date-fns';
-import ProjectSummaryCard from '@components/cards/ProjectSummaryCard';
 
 function CollectibleDetailsTemplate({
   title,
@@ -187,7 +187,7 @@ function CollectibleDetailsTemplate({
               <Block>
                 <NFTActionCard
                   userAddress={account}
-                  ownedAmount={collectible.ownedAmount}
+                  ownedAmount={collectible.acquired}
                   itemsForRent={collectible.forRent}
                   itemsForSale={collectible.forSale}
                   onClickBuy={() => {}}
