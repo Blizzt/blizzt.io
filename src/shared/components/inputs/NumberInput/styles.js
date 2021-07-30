@@ -41,7 +41,7 @@ export const IconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 53px;
+  width: 70px;
   border-right: 1px solid ${common.colors.GRAY_SEMI_LIGHT};
 	position: relative;
 	user-select: none;

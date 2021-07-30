@@ -49,8 +49,10 @@ function CollectibleDetailsTemplate({
   project,
   collectible
 }) {
+  // Hooks
   const { account } = useWeb3React();
 
+  // Attributes
   const renderAttributesList = useMemo(() => (
     (collectible.attributes.filter(e => e.trait_type !== 'birthday') || []).map((attribute, index) => (
       <Property key={`--attributes-list-${index.toString()}`}>
@@ -82,7 +84,7 @@ function CollectibleDetailsTemplate({
     () => [
       {
         Header: 'From',
-        accessor: 'nftOwner'
+        accessor: 'address'
       },
       {
         Header: 'Availability',
@@ -102,13 +104,13 @@ function CollectibleDetailsTemplate({
 
   const saleData = useMemo(
     () => collectible?.forSale.map((sale) => ({
-      address: shortenHex(sale.nftOwner),
-      amount: sale.amount,
+      address: shortenHex(sale.user.address),
+      amount: sale.quantity,
       value: (
         <TokenLabel
           value={sale.price}
-          dollars={sale.priceFiat}
-          currency={sale.paymentToken}
+          dollars={0}
+          currency={sale.currency}
         />
       )
     }) ?? []),
@@ -117,14 +119,14 @@ function CollectibleDetailsTemplate({
 
   const rentData = useMemo(
     () => collectible?.forRent.map((rent) => ({
-      nftOwner: shortenHex(rent.nftOwner),
+      address: shortenHex(rent.user.address),
       expirationDate: format(fromUnixTime(rent.expirationDate), 'MM/dd/yyyy hh:mm'),
-      amount: rent.amount,
+      amount: rent.quantity,
       value: (
         <TokenLabel
           value={rent.price}
-          dollars={rent.priceFiat}
-          currency={rent.paymentToken}
+          dollars={0}
+          currency={rent.currency}
         />
       )
     }) ?? []),
@@ -180,7 +182,7 @@ function CollectibleDetailsTemplate({
             <LinearGrid>
               <ProjectSummaryCard
                 name={project.title}
-                collectiblesCount={project.collectiblesCount}
+                nftsCount={project.nftsCount}
                 onClick={() => {}}
                 pictureUrl={project.photoUrl}
               />
@@ -192,8 +194,6 @@ function CollectibleDetailsTemplate({
                   itemsForSale={collectible.forSale}
                   onClickBuy={() => {}}
                   onClickRent={() => {}}
-                  onClickSell={() => {}}
-                  onClickRentMyNFT={() => {}}
                 />
               </Block>
               <MainTable

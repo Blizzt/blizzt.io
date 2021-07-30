@@ -38,6 +38,10 @@ export const Column = styled.div`
 	${props => `
 		${isConditional(props.separator, `
 		  border-bottom: 1px solid #e6e6e6;
+		  
+		  &:last-child {
+				border-bottom: none;
+			}
 		`)}
 	
 		${isConditional(props.vertical, `

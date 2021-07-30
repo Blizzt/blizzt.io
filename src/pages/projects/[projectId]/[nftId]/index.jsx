@@ -1,6 +1,5 @@
 // Dependencies
 import React from 'react';
-import { useRouter } from 'next/router';
 import { useQuery } from '@apollo/react-hooks';
 
 // Templates
@@ -16,7 +15,7 @@ function CollectibleDetails({ projectId, nftId }) {
   const { data: { nft } = {}, loading } = useQuery(GET_COLLECTIBLE, {
     variables: {
       projectId,
-      nftId
+      nftId: Number(nftId)
     }
   });
 
@@ -52,7 +51,7 @@ export async function getServerSideProps({ params: { projectId, nftId } }) {
   return {
     props: {
       projectId,
-      nftId: parseInt(nftId, 0)
+      nftId
     }
   };
 }

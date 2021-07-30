@@ -49,3 +49,7 @@ export const TransformMargin = styled(PageMargin)`
 		`)}
 	`}
 `;
+
+export const FormBody = styled.div`
+	padding-bottom: 8rem;
+`;

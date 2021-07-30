@@ -1,6 +1,8 @@
 // Dependencies
 import React, { useMemo, useState } from 'react';
 import { Player } from '@lottiefiles/react-lottie-player';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 // Styles
 import {
@@ -41,14 +43,15 @@ function NFTActionCard({
   itemsForRent = [],
   itemsForSale = [],
   onClickBuy = () => {},
-  onClickRent = () => {},
-  onClickRentMyNFT = () => {},
-  onClickSell = () => {}
+  onClickRent = () => {}
 }) {
+  // Hooks
+  const router = useRouter();
+
   // State
   const hasCollectibles = useMemo(() => (ownedAmount > 0), [ownedAmount]);
-  const itemForBuy = useMemo(() => itemsForSale.length > 0 ? (itemsForSale).filter(e => e.nftOwner !== userAddress[0])[0] : null, [userAddress, itemsForSale]);
-  const itemForRent = useMemo(() => itemsForRent.length > 0 ? (itemsForRent).filter(e => e.nftOwner !== userAddress[0])[0] : null, [userAddress, itemsForRent]);
+  const itemForBuy = useMemo(() => itemsForSale.length > 0 ? (itemsForSale).filter(e => e.user.address !== userAddress)[0] : null, [userAddress, itemsForSale]);
+  const itemForRent = useMemo(() => itemsForRent.length > 0 ? (itemsForRent).filter(e => e.user.address !== userAddress)[0] : null, [userAddress, itemsForRent]);
 
   const [currentViewMode, setCurrentViewMode] = useState(hasCollectibles ? viewModesId.OWNER : viewModesId.BUYER);
 
@@ -83,9 +86,9 @@ function NFTActionCard({
 						<PriceRow>
 							<TokenLabel
 								type={tokenPriceType.NORMAL}
-								currency={itemForBuy ? itemForBuy.paymentToken : currencyTypesId.ETH}
+								currency={itemForBuy ? itemForBuy.currency : currencyTypesId.ETH}
 								value={!itemForBuy ? '0.000000' : itemForBuy.price}
-								dollars={!itemForBuy ? '0.00' : itemForBuy.priceFiat}
+								dollars={!itemForBuy ? '0.00' : '0.00'}
 							/>
 						</PriceRow>
 					</Block>
@@ -94,10 +97,10 @@ function NFTActionCard({
 						<PriceRow>
 							<TokenLabel
 								type={tokenPriceType.NORMAL}
-								currency={itemForRent ? itemForRent.paymentToken : currencyTypesId.ETH}
+								currency={itemForRent ? itemForRent.currency : currencyTypesId.ETH}
 								value={!itemForRent ? '0.000000' : itemForRent.price}
 								valueLabel={'/ hour'}
-								dollars={!itemForRent ? '0.00' : itemForRent.priceFiat}
+								dollars={!itemForRent ? '0.00' : '0.00'}
 							/>
 						</PriceRow>
 					</Block>
@@ -131,16 +134,18 @@ function NFTActionCard({
 				<SummaryText>You have a total of <Medium>{ownedAmount} collectible(s)</Medium> ready to sell or rent.</SummaryText>
 			</Summary>
 			<Column>
-				<MainButton
-					caption={'Start selling'}
-					onClick={onClickSell}
-				/>
-				<MainButton
-					customStyleContainer={styles.rentButton}
-					type={buttonTypesId.SECONDARY}
-					caption={'Rent collectible'}
-					onClick={onClickRentMyNFT}
-				/>
+				<Link href={`${router.asPath}/sell`}>
+					<MainButton
+						caption={'Start selling'}
+					/>
+				</Link>
+				<Link href={`${router.asPath}/rent`}>
+					<MainButton
+						customStyleContainer={styles.rentButton}
+						type={buttonTypesId.SECONDARY}
+						caption={'Rent collectible'}
+					/>
+				</Link>
 			</Column>
 		</Layout>
   ), []);

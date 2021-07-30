@@ -20,7 +20,7 @@ function ProjectSummaryCard({
   onClick = () => {},
   pictureUrl,
   name,
-  collectiblesCount
+  nftsCount
 }) {
   return (
     <Project onClick={onClick}>
@@ -33,7 +33,7 @@ function ProjectSummaryCard({
       </ProjectImage>
       <ProjectDetails>
         <ProjectName>{name}</ProjectName>
-        <ProjectCount>Quantity of collectibles: {collectiblesCount}</ProjectCount>
+        <ProjectCount>Quantity of collectibles: {nftsCount}</ProjectCount>
       </ProjectDetails>
     </Project>
   );

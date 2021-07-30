@@ -39,5 +39,5 @@ export const ProjectDetails = styled.div`
 
 export const ProjectCount = styled.span`
 	font-size: 12px;
-	font-family: ${common.fonts.REGULAR};
+	font-family: ${common.fonts.MEDIUM};
 `;

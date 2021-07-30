@@ -175,6 +175,53 @@ export const GET_COLLECTIBLE = gql`
       IPFSAddress
       metadata
       
+      acquired
+            
+      forSale {
+        state
+        price
+        currency
+        quantity
+        
+        user {
+          address
+          username
+          photoUrl
+        }
+      }
+      
+      forRent {
+        state
+        price
+        currency
+        quantity
+        
+        user {
+          address
+          username
+          photoUrl
+        }
+      }
+      
+      project {
+        id
+        title
+        description
+        photoUrl
+        createdAt
+      }
+    }
+  }
+`;
+
+export const GET_COLLECTIBLE_TO_SELL = gql`
+  query GetNFT($projectId: ID!, $nftId: Int!) {
+    nft(projectId: $projectId, nftId: $nftId) {
+      nftId
+      type
+      IPFSAddress
+      metadata
+      
       acquired 
             
       forRent {
@@ -188,9 +235,11 @@ export const GET_COLLECTIBLE = gql`
       project {
         id
         title
+        collectionAddress
         description
         photoUrl
         createdAt
+        nftsCount
       }
     }
   }

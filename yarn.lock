@@ -4014,6 +4014,11 @@ form-data@~2.3.2:
     combined-stream "^1.0.6"
     mime-types "^2.1.12"
 
+formik-validators@^0.0.8:
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/formik-validators/-/formik-validators-0.0.8.tgz#4f91c8cd15d13ed7b27932bc1489ee0987168592"
+  integrity sha512-o6q93hRMpRdTBryjiWtEo1FVlh4vMpIKmGzxLpVo12dchRpJ4hgt40CETpdg+HbjjFjlt7/lk5jES/IvUcMjEQ==
+
 formik@^2.2.9:
   version "2.2.9"
   resolved "https://registry.yarnpkg.com/formik/-/formik-2.2.9.tgz#8594ba9c5e2e5cf1f42c5704128e119fc46232d0"
