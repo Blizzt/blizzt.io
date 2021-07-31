@@ -18,7 +18,7 @@ import { Medium } from '@styled-components/text';
 
 function RentMyCollectibleSuccessModal({ closeModal }) {
   // Hooks
-  const history = useRouter();
+  const { query, push } = useRouter();
 
   return (
 		<BaseModalContainer width={'500px'}>
@@ -38,9 +38,9 @@ function RentMyCollectibleSuccessModal({ closeModal }) {
 					<Action>
 						<Button
 							caption={'Continue'}
-							onClick={() => {
+							onClick={async() => {
 							  closeModal();
-							  history.goBack();
+							  await push(`/projects/${query.projectId}/${query.nftId}`);
 							}}
 						/>
 					</Action>

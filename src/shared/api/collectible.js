@@ -71,6 +71,34 @@ export const SELL_NFT = gql`
   }
 `;
 
+export const PUT_ON_RENT_NFT = gql`
+  mutation SellNFT(
+    $nftId: Int!
+    $projectId: ID!
+    $amount: Int!
+    $price: String!
+    $isBundlePack: Boolean!
+    $currency: Currency!
+    $message: String!
+    $signature: String!
+  ) {
+    sellNFT(
+      nftId: $nftId
+      projectId: $projectId
+      amount: $amount
+      price: $price
+      isBundlePack: $isBundlePack
+      currency: $currency
+      message: $message
+      signature: $signature
+    ) {
+      project {
+        id
+      }
+    }
+  }
+`;
+
 const CollectibleAPI = {
   create: async({ chainId, projectId, collectible }) => {
     const apollo = createApolloClient();

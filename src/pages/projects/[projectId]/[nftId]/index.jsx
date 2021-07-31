@@ -1,28 +1,18 @@
 // Dependencies
 import React from 'react';
-import { useQuery } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 
 // Templates
 import CollectibleDetailsTemplate from '@templates/projects/CollectibleDetails';
 import NotFound from '@templates/404';
 
-// API
-import { GET_COLLECTIBLE } from '@api/project';
+// Components
 import IPFSFetch from '@components/utils/IPFSFetch';
 
-function CollectibleDetails({ projectId, nftId }) {
-  // Project Data
-  const { data: { nft } = {}, loading } = useQuery(GET_COLLECTIBLE, {
-    variables: {
-      projectId,
-      nftId: Number(nftId)
-    }
-  });
+// API:
+import createApolloClient from '../../../../../apollo.client';
 
-  if (loading) {
-    return null;
-  }
-
+function CollectibleDetails({ nft = null }) {
   if (!nft) {
     return (
       <NotFound />
@@ -47,12 +37,58 @@ function CollectibleDetails({ projectId, nftId }) {
   );
 }
 
+const GET_COLLECTIBLE = gql`
+  query GetNFT($projectId: ID!, $nftId: Int!) {
+    nft(projectId: $projectId, nftId: $nftId) {
+      nftId
+      IPFSAddress
+      metadata
+      mintedAmount
+      
+      project {
+        id
+        title
+        nftsCount
+        photoUrl
+      }
+
+      forRent {
+        user {
+          address
+        }
+        quantity
+        price
+        currency
+        maxExpirationDate
+      }
+
+      forSale {
+        user {
+          address
+        }
+        quantity
+        price
+        currency
+      }
+    }
+  }
+`;
+
 export async function getServerSideProps({ params: { projectId, nftId } }) {
+  const client = createApolloClient();
+  const { data: { nft } } = await client.query({
+    query: GET_COLLECTIBLE,
+    variables: {
+      projectId,
+      nftId: Number(nftId)
+    }
+  });
+
   return {
     props: {
-      projectId,
-      nftId
+      nft
     }
   };
 }
+
 export default CollectibleDetails;

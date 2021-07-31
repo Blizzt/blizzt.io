@@ -1,7 +1,7 @@
 // Dependencies
 import React, { useCallback, useContext } from 'react';
 import Web3 from 'web3';
-import { addMonths, getUnixTime } from 'date-fns';
+import { getUnixTime } from 'date-fns';
 import { verifyMessage } from '@ethersproject/wallet';
 import { useWeb3React } from '@web3-react/core';
 
@@ -16,7 +16,7 @@ import {
 import { PageMargin } from '@styled-components/pagination';
 
 // Components
-import SellCollectibleForm from '@components/forms/SellCollectibleForm';
+import RentCollectibleForm from '@components/forms/RentCollectibleForm';
 
 // Types
 import { currencyTypesData } from '@types/web3';
@@ -28,10 +28,10 @@ import usePersonalSign from '@hooks/usePersonalSign';
 import { ThemeContext } from '@styled-components/index';
 import { modalTypesId } from '@types/ui';
 
-function SellCollectible({
+function RentCollectible({
   title,
   collectible,
-  putOnSaleNFT = () => {}
+  putOnRentNFT = () => {}
 }) {
   // Hooks
   const { account } = useWeb3React();
@@ -40,37 +40,51 @@ function SellCollectible({
   // Context
   const { openModal } = useContext(ThemeContext);
 
-  const onPutOnSaleCollectible = useCallback(async({ values: offer, formikHelpers, actionButtonRef }) => {
+  const onRentCollectible = useCallback(async({ values: offer, formikHelpers, actionButtonRef }) => {
     formikHelpers.setSubmitting(true);
     actionButtonRef.changeToLoading('Creating sales offers...');
 
     // Web3 Instance
     const web3 = new Web3(window.ethereum);
 
-    // Get metamask signature
-    const sellParams = web3.eth.abi.encodeParameters(['address', 'uint256', 'uint24', 'uint256', 'address', 'bool', 'uint256'], [collectible.project.collectionAddress, collectible.nftId, offer.amount, web3.utils.toWei(offer.price.toString()), currencyTypesData[offer.currency].code, offer.isBundlePack, getUnixTime(addMonths(new Date(), 12))]);
-    const fingerprint = await sign(sellParams);
+    // Format Price
+    const priceFormatted = parseFloat(web3.utils.toWei(offer.price.toString()) / 3600).toFixed(0);
+
+    // Get Metamask Signature Request
+    const rentParams = web3.eth.abi.encodeParameters(
+      ['address', 'uint256', 'uint24', 'uint256', 'address', 'uint256'],
+      [
+        collectible.project.collectionAddress,
+        collectible.nftId,
+        offer.amount,
+        priceFormatted,
+        currencyTypesData[offer.currency].code,
+        getUnixTime(offer.until)
+      ]);
+    const fingerprint = await sign(rentParams);
 
     // 2. Verify Data Signed and Signature
-    if (verifyMessage(sellParams, fingerprint) === account) {
-      putOnSaleNFT({
+    if (verifyMessage(rentParams, fingerprint) === account) {
+      putOnRentNFT({
         variables: {
           nftId: collectible.nftId,
           projectId: collectible.project.id,
           offer: {
             amount: Number(offer.amount),
             price: offer.price,
-            isBundlePack: offer.isBundlePack,
-            currency: currencyTypesData[offer.currency].symbol
+            currency: currencyTypesData[offer.currency].symbol,
+            until: offer.until
           },
           signature: {
-            message: sellParams,
+            message: rentParams,
             fingerprint
           }
         }
-      }).then(() => {
+      }).then(({ data: { putOnRentNFT: data } }) => {
+        console.log(data);
+
         actionButtonRef.changeToComplete('Offer published successfully');
-        openModal(modalTypesId.SELL_MY_COLLECTIBLE_SUCCESS);
+        openModal(modalTypesId.RENT_MY_COLLECTIBLE_SUCCESS);
       }).catch(() => {
         actionButtonRef.changeToError('Offer not published');
       });
@@ -82,9 +96,9 @@ function SellCollectible({
       <Layout>
         <PageMargin>
           <Body>
-            <SellCollectibleForm
+            <RentCollectibleForm
               ownedAmount={collectible.acquired}
-              onSubmit={onPutOnSaleCollectible}
+              onSubmit={onRentCollectible}
               onCancel={() => {}}
             />
           </Body>
@@ -94,4 +108,4 @@ function SellCollectible({
   );
 }
 
-export default SellCollectible;
+export default RentCollectible;

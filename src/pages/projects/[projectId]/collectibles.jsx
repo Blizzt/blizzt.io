@@ -1,7 +1,7 @@
 // Dependencies
 import React, { useCallback } from 'react';
 import { useRouter } from 'next/router';
-import { useQuery } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 
 // Templates
 import ProjectDetailsTemplate from '@templates/projects/ProjectDetails';
@@ -10,30 +10,19 @@ import ProjectDetailsTemplate from '@templates/projects/ProjectDetails';
 import RewardsList from '@components/lists/RewardsList';
 
 // API
-import { GET_PROJECT_COLLECTIBLES } from '@api/project';
+import createApolloClient from '../../../../apollo.client';
 
-function ProjectDetailsCollectibles({ projectId }) {
+function ProjectDetailsCollectibles({ project }) {
   // Hooks
   const router = useRouter();
-
-  // Project Data
-  const { data: { project } = {}, loading } = useQuery(GET_PROJECT_COLLECTIBLES, {
-    variables: {
-      id: projectId
-    }
-  });
 
   /**
    * @function onClickCollectible():
    * @description Function that is triggered by pressing edit collectible.
    */
   const onClickCollectible = useCallback((item) => {
-    router.push(`/projects/${projectId}/${item.id}`);
+    router.push(`/projects/${project.id}/${item.nftId}`);
   }, []);
-
-  if (loading) {
-    return null;
-  }
 
   return (
     <ProjectDetailsTemplate
@@ -48,10 +37,44 @@ function ProjectDetailsCollectibles({ projectId }) {
   );
 }
 
+export const GET_PROJECT_COLLECTIBLES = gql`
+  query GetProject($projectId: ID!) {
+    project(id: $projectId) {
+      id
+      title
+      description
+      photoUrl
+      createdAt
+
+      nfts {
+        nftId
+        IPFSAddress
+        metadata
+        mintedAmount
+      }
+
+      creator {
+        id
+        address
+        username
+        photoUrl
+      }
+    }
+  }
+`;
+
 export async function getServerSideProps({ params: { projectId } }) {
+  const client = createApolloClient();
+  const { data: { project } } = await client.query({
+    query: GET_PROJECT_COLLECTIBLES,
+    variables: {
+      projectId
+    }
+  });
+
   return {
     props: {
-      projectId
+      project
     }
   };
 }

@@ -25,4 +25,4 @@ function Fetch({
   return onRender(withError ? null : data, withError);
 }
 
-export default withApollo()(Fetch);
+export default withApollo({ ssr: true })(Fetch);

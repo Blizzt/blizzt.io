@@ -151,10 +151,10 @@ export const GET_PROJECT_COLLECTIBLES = gql`
       createdAt
       
       nfts {
-        id
         nftId
         IPFSAddress
         metadata
+        mintedAmount
       }
            
       creator {
@@ -167,54 +167,38 @@ export const GET_PROJECT_COLLECTIBLES = gql`
   }
 `;
 
-export const GET_COLLECTIBLE = gql`
+export const GET_COLLECTIBLE_TO_SELL = gql`
   query GetNFT($projectId: ID!, $nftId: Int!) {
     nft(projectId: $projectId, nftId: $nftId) {
-      id
+      nftId
       type
       IPFSAddress
       metadata
       
-      acquired
+      acquired 
             
-      forSale {
-        state
-        price
-        currency
-        quantity
-        
-        user {
-          address
-          username
-          photoUrl
-        }
-      }
-      
       forRent {
         state
-        price
-        currency
-        quantity
-        
-        user {
-          address
-          username
-          photoUrl
-        }
       }
       
+      forSale {
+        state
+      }
+  
       project {
         id
         title
+        collectionAddress
         description
         photoUrl
         createdAt
+        nftsCount
       }
     }
   }
 `;
 
-export const GET_COLLECTIBLE_TO_SELL = gql`
+export const GET_COLLECTIBLE_TO_RENT = gql`
   query GetNFT($projectId: ID!, $nftId: Int!) {
     nft(projectId: $projectId, nftId: $nftId) {
       nftId

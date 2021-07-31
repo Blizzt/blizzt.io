@@ -64,6 +64,8 @@ function IPFSFetch({
           // Load Metadata or Data with IPFS
           const payload = (data && data.image) ? data : JSON.parse(metadata);
 
+          payload.image = `https://ipfs.io/ipfs/${payload.image.split('//')[1]}`;
+
           // Set Data of Response
           dispatch({ type: actions.SET_DATA, payload });
 

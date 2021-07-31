@@ -1,6 +1,6 @@
 // Dependencies
 import React from 'react';
-import { useQuery } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 
 // Templates
 import ProjectDetailsTemplate from '@templates/projects/ProjectDetails';
@@ -9,20 +9,9 @@ import ProjectDetailsTemplate from '@templates/projects/ProjectDetails';
 import MarkdownViewContainer from '@containers/MarkdownViewContainer';
 
 // API
-import { GET_PROJECT_PAPER } from '@api/project';
+import createApolloClient from '../../../../apollo.client';
 
-function ProjectDetails({ projectId }) {
-  // Project Data
-  const { data: { project } = {}, loading } = useQuery(GET_PROJECT_PAPER, {
-    variables: {
-      id: projectId
-    }
-  });
-
-  if (loading) {
-    return null;
-  }
-
+function ProjectDetails({ project }) {
   return (
     <ProjectDetailsTemplate project={project}>
       <MarkdownViewContainer document={project.document} />
@@ -30,10 +19,37 @@ function ProjectDetails({ projectId }) {
   );
 }
 
+export const GET_PROJECT_PAPER = gql`
+  query GetProject($projectId: ID!) {
+    project(id: $projectId) {
+      id
+      title
+      description
+      photoUrl
+      document
+      
+      creator {
+        id
+        address
+        username
+        photoUrl
+      }
+    }
+  }
+`;
+
 export async function getServerSideProps({ params: { projectId } }) {
+  const client = createApolloClient();
+  const { data: { project } } = await client.query({
+    query: GET_PROJECT_PAPER,
+    variables: {
+      projectId
+    }
+  });
+
   return {
     props: {
-      projectId
+      project
     }
   };
 }

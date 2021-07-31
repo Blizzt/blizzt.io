@@ -42,7 +42,9 @@ import { CartOutline, FlashOutline, HourglassOutline } from 'react-ionicons';
 
 // Utils
 import { shortenHex } from '@utils/web3';
-import { format, fromUnixTime } from 'date-fns';
+import { format } from 'date-fns';
+import Fetch from '@components/utils/Fetch';
+import gql from 'graphql-tag';
 
 function CollectibleDetailsTemplate({
   title,
@@ -120,7 +122,7 @@ function CollectibleDetailsTemplate({
   const rentData = useMemo(
     () => collectible?.forRent.map((rent) => ({
       address: shortenHex(rent.user.address),
-      expirationDate: format(fromUnixTime(rent.expirationDate), 'MM/dd/yyyy hh:mm'),
+      expirationDate: format(new Date(rent.maxExpirationDate), 'MM/dd/yyyy hh:mm'),
       amount: rent.quantity,
       value: (
         <TokenLabel
@@ -141,7 +143,7 @@ function CollectibleDetailsTemplate({
             <LinearGrid>
               <MainImage
                 aspectRatio={imageAspectRatio.ONE}
-                source={`https://ipfs.io/ipfs/${collectible.image.split('//')[1]}`}
+                source={collectible.image}
                 radius={4}
               />
               <Block>
@@ -187,13 +189,22 @@ function CollectibleDetailsTemplate({
                 pictureUrl={project.photoUrl}
               />
               <Block>
-                <NFTActionCard
-                  userAddress={account}
-                  ownedAmount={collectible.acquired}
-                  itemsForRent={collectible.forRent}
-                  itemsForSale={collectible.forSale}
-                  onClickBuy={() => {}}
-                  onClickRent={() => {}}
+                <Fetch
+                  gql={GET_NFT_ACTIONS}
+                  variables={{
+                    projectId: project.id,
+                    nftId: collectible.nftId
+                  }}
+                  onRender={({ nft }) => (
+                    <NFTActionCard
+                      userAddress={account}
+                      ownedAmount={nft.acquired}
+                      itemsForRent={collectible.forRent}
+                      itemsForSale={collectible.forSale}
+                      onClickBuy={() => {}}
+                      onClickRent={() => {}}
+                    />
+                  )}
                 />
               </Block>
               <MainTable
@@ -229,5 +240,13 @@ function CollectibleDetailsTemplate({
     </PageLayout>
   );
 }
+
+const GET_NFT_ACTIONS = gql`
+  query GetNFT($projectId: ID!, $nftId: Int!) {
+    nft(projectId: $projectId, nftId: $nftId) {
+      acquired
+    }
+  }
+`;
 
 export default CollectibleDetailsTemplate;

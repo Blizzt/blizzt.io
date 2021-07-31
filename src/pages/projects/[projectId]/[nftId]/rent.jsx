@@ -4,14 +4,15 @@ import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 // Templates
-import SellCollectibleTemplate from '@templates/projects/SellCollectible';
+import RentCollectibleTemplate from '@templates/projects/RentCollectible';
 import NotFound from '@templates/404';
 
 // API
+import { withApollo } from '@api/apollo';
 import createApolloClient from '../../../../../apollo.client';
 
-function PutOnSaleNFT({ nft }) {
-  const [putOnSaleNFT] = useMutation(PUT_ON_SALE_NFT);
+function PutOnRentNFT({ nft }) {
+  const [putOnRentNFT] = useMutation(PUT_ON_RENT_NFT);
 
   const metadata = useMemo(() => {
     if (nft) {
@@ -27,10 +28,10 @@ function PutOnSaleNFT({ nft }) {
   }
 
   return (
-    <SellCollectibleTemplate
-      title={`Put on sale: ${metadata.name} - ${nft.project.title}`}
+    <RentCollectibleTemplate
+      title={`Put on rent: ${metadata.name} - ${nft.project.title}`}
       collectible={nft}
-      putOnSaleNFT={putOnSaleNFT}
+      putOnRentNFT={putOnRentNFT}
     />
   );
 }
@@ -51,14 +52,14 @@ const GET_COLLECTIBLE = gql`
   }
 `;
 
-const PUT_ON_SALE_NFT = gql`
-  mutation PutOnSaleNFT(
+const PUT_ON_RENT_NFT = gql`
+  mutation PutOnRentNFT(
     $nftId: Int!
     $projectId: ID!
     $offer: OfferInput!
     $signature: UserSignatureInput!
   ) {
-    putOnSaleNFT(
+    putOnRentNFT(
       nftId: $nftId
       projectId: $projectId
       offer: $offer
@@ -67,7 +68,7 @@ const PUT_ON_SALE_NFT = gql`
       id
       quantity
       price
-      isBundlePack
+      maxExpirationDate
       currency
 
       user {
@@ -94,4 +95,4 @@ export async function getServerSideProps({ params: { projectId, nftId } }) {
   };
 }
 
-export default PutOnSaleNFT;
+export default PutOnRentNFT;
