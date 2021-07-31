@@ -45,9 +45,15 @@ export const IconContainer = styled.div`
   border-right: 1px solid ${common.colors.GRAY_SEMI_LIGHT};
 	position: relative;
 	user-select: none;
+
+	.chevron-right {
+		position: absolute;
+		right: 4px;
+		top: 22px;
+		opacity: 0.5;
+	}
 	
 	${props => `
-	
 		${isConditional(props.pointer, `
 			cursor: pointer;
 		`)}
@@ -55,8 +61,8 @@ export const IconContainer = styled.div`
 `;
 
 export const Coin = styled.img`
-	width: 24px;
-	height: 24px;
+	width: 26px;
+	height: 26px;
 `;
 
 export const CoinList = styled.ul`
@@ -69,12 +75,13 @@ export const CoinList = styled.ul`
 `;
 
 export const CoinItem = styled.li`
-  padding: 14px 22px 14px 14px;
-  cursor: pointer;
+	padding: 14px 22px 14px 14px;
+	cursor: pointer;
+	white-space: nowrap;
 
-  &:hover {
-    background: ${common.colors.GRAY_LIGHT};
-  }
+	&:hover {
+		background: ${common.colors.GRAY_LIGHT};
+	}
 `;
 
 export const CoinName = styled.span`

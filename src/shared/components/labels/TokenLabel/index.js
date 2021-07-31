@@ -23,14 +23,14 @@ export const tokenPriceType = {
 
 function TokenLabel({
   value,
-  dollars = null,
+  fiat = null,
   valueLabel = null,
   type = tokenPriceType.SMALL,
-  currency = currencyTypesId.ETH
+  currencyId = currencyTypesId.ETH
 }) {
   return (
 		<Layout type={type}>
-			<Icon src={currencyTypesData[currency].image} alt={`${value}`} />
+			<Icon src={currencyTypesData[currencyId].image} alt={`${value}`} />
 			<PriceData>
 				<PriceValue>
 					<NumberFormat
@@ -40,11 +40,11 @@ function TokenLabel({
 					/>
 					{valueLabel && <Medium>{valueLabel}</Medium>}
 				</PriceValue>
-				{dollars &&
+				{fiat &&
 					<SubLabel>
 						<NumberFormat
 							prefix={'$'}
-							value={dollars}
+							value={fiat}
 							displayType={'text'}
 							thousandSeparator={true}
 						/>

@@ -47,7 +47,7 @@ function Header() {
         <Left>
           <Link href={'/'}>
             <Branding>
-              <ImageSource src={Logo} alt={'Blizzt Finance - NFT Crowdfunding'} />
+              <ImageSource src={Logo} alt={'Blizzt Finance'} />
             </Branding>
           </Link>
           <Navigator count={1}>

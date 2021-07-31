@@ -50,32 +50,36 @@ export const chainsNetworkName = {
 };
 
 export const currencyTypesId = {
-  ETH: 'ETH',
-  DAI: 'DAI',
-  USDT: 'USDT',
-  BLZT: 'BLZT'
+  ETH: 'ethereum',
+  DAI: 'dai',
+  USDT: 'tether',
+  BLZT: 'blizzt'
 };
 
 export const currencyTypesData = {
   [currencyTypesId.ETH]: {
+    id: currencyTypesId.ETH,
     name: 'Ethereum',
     symbol: 'ETH',
     code: '0x0000000000000000000000000000000000000000',
     image: ETHTokenIcon
   },
   [currencyTypesId.DAI]: {
+    id: currencyTypesId.DAI,
     name: 'Dai',
     symbol: 'DAI',
     code: '0x0000000000000000000000000000000000000001',
     image: DAITokenIcon
   },
   [currencyTypesId.USDT]: {
+    id: currencyTypesId.USDT,
     name: 'Tether',
     symbol: 'USDT',
     code: '0x626fdbfF6D1B75237121415b8eD178543AF0981c',
     image: USDTTokenIcon
   },
   [currencyTypesId.BLZT]: {
+    id: currencyTypesId.BLZT,
     name: 'Blizzt',
     symbol: 'BLZT',
     code: '0x0000000000000000000000000000000000000003',

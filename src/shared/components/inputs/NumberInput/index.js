@@ -68,7 +68,7 @@ export default function NumberInput({
   }, [onChangeCurrency]);
 
   const renderCoinList = useMemo(() => (
-		<CoinList ref={menuRef}>
+		<CoinList>
 			{Object.keys(currencyTypesData).map((currency, index) => (
 				<CoinItem
 					key={`--currency-token-${index.toString()}`}
@@ -94,15 +94,17 @@ export default function NumberInput({
 			{label && <Label>{label}</Label>}
 			{description && <Description>{description}</Description>}
 			<Container>
-				<IconContainer onClick={onClickCurrency} pointer={isPriceInput}>
+				<IconContainer onClick={onClickCurrency} pointer={isPriceInput} ref={menuRef}>
 					{isPriceInput ? (
 						<>
 							<Coin src={currencyTypesData[currency].image} />
 							<ChevronDownOutline
+                className={'chevron-right'}
 								width={'12px'}
 								height={'12px'}
 								color={common.colors.BLACK}
 							/>
+              {(isPriceInput && isCoinMenuEnabled) && renderCoinList}
 						</>
 					) : (
 						<DiceOutline
@@ -116,7 +118,6 @@ export default function NumberInput({
 					value={value}
 					onChange={e => onChangeText(e.target.value)}
 				/>
-				{(isPriceInput && isCoinMenuEnabled) && renderCoinList}
 			</Container>
 			{error && <FormErrorText text={error} />}
 		</Layout>

@@ -61,7 +61,7 @@ function SellCollectible({
             amount: Number(offer.amount),
             price: offer.price,
             isBundlePack: offer.isBundlePack,
-            currency: currencyTypesData[offer.currency].symbol
+            currencyId: currencyTypesData[offer.currency].id
           },
           signature: {
             message: sellParams,

@@ -1,6 +1,6 @@
 // Dependencies
 import React, { useMemo } from 'react';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 // Templates
@@ -9,10 +9,32 @@ import NotFound from '@templates/404';
 
 // API
 import { withApollo } from '@api/apollo';
-import createApolloClient from '../../../../../apollo.client';
+import { GET_NFT_ACTIONS } from '@templates/projects/CollectibleDetails';
 
-function PutOnRentNFT({ nft }) {
-  const [putOnRentNFT] = useMutation(PUT_ON_RENT_NFT);
+function PutOnRentNFT({ projectId, nftId }) {
+  const { loading, data: { nft } = {} } = useQuery(GET_COLLECTIBLE, {
+    variables: {
+      projectId,
+      nftId: Number(nftId)
+    }
+  });
+
+  const [putOnRentNFT] = useMutation(PUT_ON_RENT_NFT, {
+    update: (cache, { data: { putOnRentNFT } }) => {
+      cache.writeQuery({
+        query: GET_NFT_ACTIONS,
+        variables: {
+          projectId,
+          nftId: Number(nftId)
+        },
+        data: {
+          nft: {
+            acquired: putOnRentNFT.nft.acquired
+          }
+        }
+      });
+    }
+  });
 
   const metadata = useMemo(() => {
     if (nft) {
@@ -20,6 +42,10 @@ function PutOnRentNFT({ nft }) {
     }
     return null;
   }, [nft]);
+
+  if (loading) {
+    return null;
+  }
 
   if (!nft) {
     return (
@@ -69,7 +95,10 @@ const PUT_ON_RENT_NFT = gql`
       quantity
       price
       maxExpirationDate
-      currency
+
+      nft {
+        acquired
+      }
 
       user {
         address
@@ -79,20 +108,12 @@ const PUT_ON_RENT_NFT = gql`
 `;
 
 export async function getServerSideProps({ params: { projectId, nftId } }) {
-  const client = createApolloClient();
-  const { data: { nft } } = await client.query({
-    query: GET_COLLECTIBLE,
-    variables: {
-      projectId,
-      nftId: Number(nftId)
-    }
-  });
-
   return {
     props: {
-      nft
+      projectId,
+      nftId
     }
   };
 }
 
-export default PutOnRentNFT;
+export default withApollo()(PutOnRentNFT);

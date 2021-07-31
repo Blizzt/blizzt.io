@@ -94,7 +94,6 @@ const Account = ({ triedToEagerConnect }) => {
             onClick={() => {
               setConnecting(true);
               activate(injected, undefined, true).catch((error) => {
-                // ignore the error if it's a user rejected request
                 if (error instanceof UserRejectedRequestError) {
                   setConnecting(false);
                 } else {

@@ -72,7 +72,7 @@ function RentCollectible({
           offer: {
             amount: Number(offer.amount),
             price: offer.price,
-            currency: currencyTypesData[offer.currency].symbol,
+            currencyId: currencyTypesData[offer.currency].id,
             until: offer.until
           },
           signature: {
@@ -81,8 +81,6 @@ function RentCollectible({
           }
         }
       }).then(({ data: { putOnRentNFT: data } }) => {
-        console.log(data);
-
         actionButtonRef.changeToComplete('Offer published successfully');
         openModal(modalTypesId.RENT_MY_COLLECTIBLE_SUCCESS);
       }).catch(() => {

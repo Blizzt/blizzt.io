@@ -1,6 +1,6 @@
 // Dependencies
 import React, { useMemo } from 'react';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 // Templates
@@ -8,10 +8,33 @@ import SellCollectibleTemplate from '@templates/projects/SellCollectible';
 import NotFound from '@templates/404';
 
 // API
-import createApolloClient from '../../../../../apollo.client';
+import { withApollo } from '@api/apollo';
+import { GET_NFT_ACTIONS } from '@templates/projects/CollectibleDetails';
 
-function PutOnSaleNFT({ nft }) {
-  const [putOnSaleNFT] = useMutation(PUT_ON_SALE_NFT);
+function PutOnSaleNFT({ projectId, nftId }) {
+  const { loading, data: { nft } = {} } = useQuery(GET_COLLECTIBLE, {
+    variables: {
+      projectId,
+      nftId: Number(nftId)
+    }
+  });
+
+  const [putOnSaleNFT] = useMutation(PUT_ON_SALE_NFT, {
+    update: (cache, { data: { putOnSaleNFT } }) => {
+      cache.writeQuery({
+        query: GET_NFT_ACTIONS,
+        variables: {
+          projectId,
+          nftId: Number(nftId)
+        },
+        data: {
+          nft: {
+            acquired: putOnSaleNFT.nft.acquired
+          }
+        }
+      });
+    }
+  });
 
   const metadata = useMemo(() => {
     if (nft) {
@@ -19,6 +42,10 @@ function PutOnSaleNFT({ nft }) {
     }
     return null;
   }, [nft]);
+
+  if (loading) {
+    return null;
+  }
 
   if (!nft) {
     return (
@@ -68,7 +95,10 @@ const PUT_ON_SALE_NFT = gql`
       quantity
       price
       isBundlePack
-      currency
+
+      nft {
+        acquired
+      }
 
       user {
         address
@@ -78,20 +108,12 @@ const PUT_ON_SALE_NFT = gql`
 `;
 
 export async function getServerSideProps({ params: { projectId, nftId } }) {
-  const client = createApolloClient();
-  const { data: { nft } } = await client.query({
-    query: GET_COLLECTIBLE,
-    variables: {
-      projectId,
-      nftId: Number(nftId)
-    }
-  });
-
   return {
     props: {
-      nft
+      projectId,
+      nftId
     }
   };
 }
 
-export default PutOnSaleNFT;
+export default withApollo()(PutOnSaleNFT);

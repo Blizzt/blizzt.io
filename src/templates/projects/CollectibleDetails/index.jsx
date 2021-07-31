@@ -54,6 +54,8 @@ function CollectibleDetailsTemplate({
   // Hooks
   const { account } = useWeb3React();
 
+  console.log({ project, collectible });
+
   // Attributes
   const renderAttributesList = useMemo(() => (
     (collectible.attributes.filter(e => e.trait_type !== 'birthday') || []).map((attribute, index) => (
@@ -111,8 +113,8 @@ function CollectibleDetailsTemplate({
       value: (
         <TokenLabel
           value={sale.price}
-          dollars={0}
-          currency={sale.currency}
+          fiat={sale.fiat.usd}
+          currencyId={sale.currency.id}
         />
       )
     }) ?? []),
@@ -127,8 +129,8 @@ function CollectibleDetailsTemplate({
       value: (
         <TokenLabel
           value={rent.price}
-          dollars={0}
-          currency={rent.currency}
+          fiat={rent.fiat.usd}
+          currencyId={rent.currency.id}
         />
       )
     }) ?? []),
@@ -195,12 +197,12 @@ function CollectibleDetailsTemplate({
                     projectId: project.id,
                     nftId: collectible.nftId
                   }}
-                  onRender={({ nft }) => (
+                  onRender={({ nft = {} }) => (
                     <NFTActionCard
                       userAddress={account}
-                      ownedAmount={nft.acquired}
-                      itemsForRent={collectible.forRent}
-                      itemsForSale={collectible.forSale}
+                      ownedAmount={nft?.acquired}
+                      itemForRent={nft?.latestOffers.forRent}
+                      itemForSale={nft?.latestOffers.forSale}
                       onClickBuy={() => {}}
                       onClickRent={() => {}}
                     />
@@ -241,10 +243,39 @@ function CollectibleDetailsTemplate({
   );
 }
 
-const GET_NFT_ACTIONS = gql`
+export const GET_NFT_ACTIONS = gql`
   query GetNFT($projectId: ID!, $nftId: Int!) {
     nft(projectId: $projectId, nftId: $nftId) {
       acquired
+
+      # Latest Offers
+      latestOffers {
+        forRent {
+          id
+          price
+
+          fiat {
+            usd
+          }
+
+          currency {
+            id
+          }
+        }
+
+        forSale {
+          id
+          price
+
+          fiat {
+            usd
+          }
+
+          currency {
+            id
+          }
+        }
+      }
     }
   }
 `;

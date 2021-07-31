@@ -40,11 +40,13 @@ function CollectibleDetails({ nft = null }) {
 const GET_COLLECTIBLE = gql`
   query GetNFT($projectId: ID!, $nftId: Int!) {
     nft(projectId: $projectId, nftId: $nftId) {
+      # Collectible Details
       nftId
       IPFSAddress
       metadata
       mintedAmount
       
+      # Project Details
       project {
         id
         title
@@ -52,23 +54,55 @@ const GET_COLLECTIBLE = gql`
         photoUrl
       }
 
+      # Renting Listing
       forRent {
         user {
           address
         }
         quantity
         price
-        currency
         maxExpirationDate
+
+        fiat {
+          usd
+          eur
+          aed
+          cny
+          cny
+          jpy
+          rub
+          gbp
+        }
+
+        currency {
+          id
+          symbol
+        }
       }
 
+      # Sale Listing
       forSale {
         user {
           address
         }
         quantity
         price
-        currency
+
+        fiat {
+          usd
+          eur
+          aed
+          cny
+          cny
+          jpy
+          rub
+          gbp
+        }
+
+        currency {
+          id
+          symbol
+        }
       }
     }
   }

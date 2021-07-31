@@ -40,8 +40,8 @@ const viewModesId = {
 function NFTActionCard({
   userAddress = null,
   ownedAmount = null,
-  itemsForRent = [],
-  itemsForSale = [],
+  itemForRent = null,
+  itemForSale = null,
   onClickBuy = () => {},
   onClickRent = () => {}
 }) {
@@ -50,14 +50,11 @@ function NFTActionCard({
 
   // State
   const hasCollectibles = useMemo(() => (ownedAmount > 0), [ownedAmount]);
-  const itemForBuy = useMemo(() => itemsForSale.length > 0 ? (itemsForSale).filter(e => e.user.address !== userAddress)[0] : null, [userAddress, itemsForSale]);
-  const itemForRent = useMemo(() => itemsForRent.length > 0 ? (itemsForRent).filter(e => e.user.address !== userAddress)[0] : null, [userAddress, itemsForRent]);
-
   const [currentViewMode, setCurrentViewMode] = useState(hasCollectibles ? viewModesId.OWNER : viewModesId.BUYER);
 
   const renderViewingHeader = useMemo(() => (
   	<ViewingHeader>
-			{(itemForBuy || itemForRent) && (
+			{(itemForSale || itemForRent) && (
 				<ViewingAction
 					onClick={() => setCurrentViewMode(viewModesId.BUYER)}
 					isActive={currentViewMode === viewModesId.BUYER}
@@ -75,7 +72,7 @@ function NFTActionCard({
 				</ViewingAction>
 			)}
 		</ViewingHeader>
-  ), [itemForBuy, itemForRent, hasCollectibles, currentViewMode]);
+  ), [itemForSale, itemForRent, hasCollectibles, currentViewMode]);
 
   const renderBuyer = useMemo(() => {
   	return (
@@ -86,9 +83,9 @@ function NFTActionCard({
 						<PriceRow>
 							<TokenLabel
 								type={tokenPriceType.NORMAL}
-								currency={itemForBuy ? itemForBuy.currency : currencyTypesId.ETH}
-								value={!itemForBuy ? '0.000000' : itemForBuy.price}
-								dollars={!itemForBuy ? '0.00' : '0.00'}
+								currency={itemForSale ? itemForSale.currency.id : currencyTypesId.ETH}
+								value={!itemForSale ? '0.000000' : itemForSale.price}
+								fiat={!itemForSale ? '0.00' : itemForSale.fiat.usd}
 							/>
 						</PriceRow>
 					</Block>
@@ -97,10 +94,10 @@ function NFTActionCard({
 						<PriceRow>
 							<TokenLabel
 								type={tokenPriceType.NORMAL}
-								currency={itemForRent ? itemForRent.currency : currencyTypesId.ETH}
+								currency={itemForRent ? itemForRent.currency.id : currencyTypesId.ETH}
 								value={!itemForRent ? '0.000000' : itemForRent.price}
 								valueLabel={'/ hour'}
-								dollars={!itemForRent ? '0.00' : '0.00'}
+								fiat={!itemForRent ? '0.00' : itemForRent.fiat.usd}
 							/>
 						</PriceRow>
 					</Block>
@@ -108,8 +105,8 @@ function NFTActionCard({
 				<Column>
 					<MainButton
 						caption={'Buy Now'}
-						type={itemForBuy ? buttonTypesId.PRIMARY : buttonTypesId.DISABLED}
-						onClick={() => onClickBuy(itemForBuy)}
+						type={itemForSale ? buttonTypesId.PRIMARY : buttonTypesId.DISABLED}
+						onClick={() => onClickBuy(itemForSale)}
 					/>
 					<MainButton
 						customStyleContainer={styles.rentButton}
@@ -120,7 +117,7 @@ function NFTActionCard({
 				</Column>
 			</Layout>
     );
-  }, [itemForRent, itemForBuy]);
+  }, [itemForRent, itemForSale]);
 
   const renderOwner = useMemo(() => (
 		<Layout>
