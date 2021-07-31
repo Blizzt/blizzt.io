@@ -7,7 +7,16 @@ import gql from 'graphql-tag';
 import MainTemplate from '@templates/MainTemplate';
 
 // GraphQL
-import { withApollo } from '@api/apollo';
+import createApolloClient from '../../apollo.client';
+
+function Main({ projects }) {
+  return (
+    <MainTemplate
+      title={'Blizzt.io | Blockchain Technology for Developers and Gamers'}
+      latestProjects={projects}
+    />
+  );
+}
 
 export const LATEST_PROJECTS = gql`
   query {
@@ -15,7 +24,7 @@ export const LATEST_PROJECTS = gql`
       id
       title
       photoUrl
-      
+
       category {
         id
         name
@@ -24,19 +33,17 @@ export const LATEST_PROJECTS = gql`
   }
 `;
 
-function Main() {
-  const { loading, data: { projects: latestProjects } = {} } = useQuery(LATEST_PROJECTS);
+export async function getServerSideProps() {
+  const client = createApolloClient();
+  const { data: { projects } } = await client.query({
+    query: LATEST_PROJECTS
+  });
 
-  if (loading) {
-    return null;
-  }
-
-  return (
-    <MainTemplate
-      title={'Blizzt.io | Blockchain Technology for Developers and Gamers'}
-      latestProjects={latestProjects}
-    />
-  );
+  return {
+    props: {
+      projects
+    }
+  };
 }
 
-export default withApollo({ ssr: true })(Main);
+export default Main;

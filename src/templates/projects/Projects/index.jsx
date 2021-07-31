@@ -43,13 +43,13 @@ function ProjectsTemplate({
                 {(projects).map((project, index) => (
                   <MemorizedProjectCard
                     key={`--project-item-card-${index.toString()}`}
-                    name={project.name}
-                    photo={project.photo}
-                    categoryId={project.categoryId}
+                    title={project.title}
+                    photoUrl={project.photoUrl}
+                    category={project.category}
                     description={project.description}
-                    collectiblesCount={project.collectiblesCount}
-                    collectiblesSold={project.collectiblesSold}
-                    path={`/projects/${project._id}`}
+                    collectiblesCount={project.nftsCount}
+                    collectiblesSold={0}
+                    path={`/projects/${project.id}`}
                   />
                 ))}
               </Grid>

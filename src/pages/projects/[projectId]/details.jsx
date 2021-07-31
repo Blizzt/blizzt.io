@@ -1,27 +1,14 @@
 // Dependencies
 import React from 'react';
+import gql from 'graphql-tag';
 
 // Templates
 import ProjectDetailsTemplate from '@templates/projects/ProjectDetails';
 
-// Components
-import { useQuery } from '@apollo/react-hooks';
-
 // API
-import { GET_PROJECT_DETAILS } from '@api/project';
+import createApolloClient from '../../../../apollo.client';
 
-function ProjectDetailsCollectibles({ projectId }) {
-  // Project Data
-  const { data: { project } = {}, loading } = useQuery(GET_PROJECT_DETAILS, {
-    variables: {
-      id: projectId
-    }
-  });
-
-  if (loading) {
-    return null;
-  }
-
+function ProjectDetailsCollectibles({ project }) {
   return (
     <ProjectDetailsTemplate
       project={project}
@@ -32,10 +19,39 @@ function ProjectDetailsCollectibles({ projectId }) {
   );
 }
 
+export const GET_PROJECT_DETAILS = gql`
+  query GetProject($id: ID!) {
+    project(id: $id) {
+      id
+      title
+      chainId
+      description
+      isPublic
+      photoUrl
+      createdAt
+
+      creator {
+        id
+        address
+        username
+        photoUrl
+      }
+    }
+  }
+`;
+
 export async function getServerSideProps({ params: { projectId } }) {
+  const client = createApolloClient();
+  const { data: { project } } = await client.query({
+    query: GET_PROJECT_DETAILS,
+    variables: {
+      projectId
+    }
+  });
+
   return {
     props: {
-      projectId
+      project
     }
   };
 }

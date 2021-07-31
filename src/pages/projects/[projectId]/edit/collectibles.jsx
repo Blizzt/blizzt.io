@@ -1,7 +1,7 @@
 // Dependencies
 import React, { useCallback } from 'react';
 import { useWeb3React } from '@web3-react/core';
-import { useQuery } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 
 // Templates
 import EditMyProjectTemplate from '@templates/projects/ProjectEdit';
@@ -12,7 +12,7 @@ import RewardsEditContainer, { modeTypesId } from '@containers/RewardsEditContai
 
 // API
 import CollectibleAPI from '@api/collectible';
-import { GET_PROJECT_COLLECTIBLES } from '@api/project';
+import createApolloClient from '../../../../../apollo.client';
 
 // Hooks
 import { useTheme } from '@styled-components/index';
@@ -20,31 +20,20 @@ import { useTheme } from '@styled-components/index';
 // Types
 import { modalTypesId } from '@types/ui';
 
-function EditMyProjectCollectibles({ projectId }) {
+function EditMyProjectCollectibles({ project }) {
   const { openModal, closeModal } = useTheme();
   const { chainId, account } = useWeb3React();
-
-  // Project Data
-  const { data: { project } = {}, loading } = useQuery(GET_PROJECT_COLLECTIBLES, {
-    variables: {
-      id: projectId
-    }
-  });
 
   const handleNFTCreationSubmit = useCallback(async(collectible, formikHelpers, actionButtonRef, setMode) => {
     await openModal(modalTypesId.CREATE_MY_COLLECTIBLE_PROCESS);
     await CollectibleAPI.create({
       chainId,
-      projectId,
+      projectId: project.id,
       collectible
     });
     await closeModal();
     await setMode(modeTypesId.VIEWING_MODE);
-  }, [chainId, account, projectId]);
-
-  if (loading) {
-    return null;
-  }
+  }, [chainId, account, project]);
 
   return (
     <EditMyProjectTemplate
@@ -64,10 +53,35 @@ function EditMyProjectCollectibles({ projectId }) {
   );
 }
 
+export const GET_PROJECT_DETAILS = gql`
+  query GetProject($id: ID!) {
+    project(id: $id) {
+      id
+      title
+      photoUrl
+      createdAt
+
+      nfts {
+        IPFSAddress
+        metadata
+        mintedAmount
+      }
+    }
+  }
+`;
+
 export async function getServerSideProps({ params: { projectId } }) {
+  const client = createApolloClient();
+  const { data: { project } } = await client.query({
+    query: GET_PROJECT_DETAILS,
+    variables: {
+      id: projectId
+    }
+  });
+
   return {
     props: {
-      projectId
+      project
     }
   };
 }

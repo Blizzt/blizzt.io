@@ -2,7 +2,8 @@
 import React, { useCallback } from 'react';
 import { verifyMessage } from '@ethersproject/wallet';
 import { useWeb3React } from '@web3-react/core';
-import { useMutation, useQuery } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 
 // Templates
 import EditMyProjectTemplate from '@templates/projects/ProjectEdit';
@@ -12,7 +13,8 @@ import MarkdownEditForm from '@components/forms/edit-projects/MarkdownEditForm';
 import SectionTitle from '@components/titles/SectionTitle';
 
 // API
-import { EDIT_PROJECT, GET_PROJECT_DETAILS_FOR_EDIT } from '@api/project';
+import { EDIT_PROJECT } from '@api/project';
+import createApolloClient from '../../../../../apollo.client';
 
 // Styled Components
 import { PageMargin } from '@styled-components/pagination';
@@ -20,14 +22,8 @@ import { PageMargin } from '@styled-components/pagination';
 // Hooks
 import usePersonalSign from '@hooks/usePersonalSign';
 
-function EditMyProject({ projectId }) {
+function EditMyProject({ project }) {
   const [editProject] = useMutation(EDIT_PROJECT);
-
-  const { data: { project } = {}, loading } = useQuery(GET_PROJECT_DETAILS_FOR_EDIT, {
-    variables: {
-      id: projectId
-    }
-  });
 
   // Hooks
   const { account, chainId } = useWeb3React();
@@ -43,7 +39,7 @@ function EditMyProject({ projectId }) {
       if (verifyMessage(dataToSign, signature) === account) {
         editProject({
           variables: {
-            id: projectId,
+            id: project.id,
             data: {
               document: values.document
             }
@@ -75,11 +71,7 @@ function EditMyProject({ projectId }) {
         }
       }
     }
-  }, [project, projectId, account, chainId]);
-
-  if (loading) {
-    return null;
-  }
+  }, [project, account, chainId]);
 
   return (
     <EditMyProjectTemplate project={project} title={`${project.title} - Edit information`}>
@@ -97,10 +89,30 @@ function EditMyProject({ projectId }) {
   );
 }
 
+export const GET_PROJECT_DETAILS = gql`
+  query GetProject($id: ID!) {
+    project(id: $id) {
+      id
+      title
+      document
+      photoUrl
+      createdAt
+    }
+  }
+`;
+
 export async function getServerSideProps({ params: { projectId } }) {
+  const client = createApolloClient();
+  const { data: { project } } = await client.query({
+    query: GET_PROJECT_DETAILS,
+    variables: {
+      id: projectId
+    }
+  });
+
   return {
     props: {
-      projectId
+      project
     }
   };
 }

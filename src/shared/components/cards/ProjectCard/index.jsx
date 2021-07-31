@@ -1,5 +1,5 @@
 // Dependencies
-import React, { useMemo } from 'react';
+import React from 'react';
 import Link from 'next/link';
 
 // Styled Components
@@ -17,32 +17,27 @@ import {
 import ProgressBarIndicator from '@components/indicators/ProgressBarIndicator';
 import MainImage from '@components/images/MainImage';
 
-// Types
-import { categories } from '@types/categories';
-
 // Utils
 import { shortenDescription } from '@utils/string';
 import { Medium } from '@styled-components/text';
 
 function ProjectCard({
   path,
-  name,
-  photo,
-  categoryId,
+  title,
+  photoUrl,
+  category,
   description,
   collectiblesCount,
   collectiblesSold
 }) {
-  const category = useMemo(() => categories.filter(e => e.id === categoryId)[0], [categoryId]);
-
   return (
   	<Link href={path}>
 			<Layout>
-				<MainImage source={photo} />
+				<MainImage source={photoUrl} />
 				<Content>
 					<Data>
 						<Category>{category.label}</Category>
-						<Title>{name}</Title>
+						<Title>{title}</Title>
 						<Description>
 							{shortenDescription(description, 136)}
 							{description.length > 136 && (

@@ -2,7 +2,7 @@
 import React, { useCallback } from 'react';
 import { verifyMessage } from '@ethersproject/wallet';
 import { useWeb3React } from '@web3-react/core';
-import { useMutation, useQuery } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
 
 // Templates
 import EditMyProjectTemplate from '@templates/projects/ProjectEdit';
@@ -18,18 +18,12 @@ import { PageMargin } from '@styled-components/pagination';
 import usePersonalSign from '@hooks/usePersonalSign';
 
 // API
-import { EDIT_PROJECT, GET_PROJECT_DETAILS_FOR_EDIT } from '@api/project';
+import { EDIT_PROJECT } from '@api/project';
+import createApolloClient from '../../../../../apollo.client';
+import gql from 'graphql-tag';
 
-function EditMyProject({ projectId }) {
+function EditMyProject({ project }) {
   const [editProject] = useMutation(EDIT_PROJECT);
-
-  console.log({ projectId });
-
-  const { data: { project } = {}, loading } = useQuery(GET_PROJECT_DETAILS_FOR_EDIT, {
-    variables: {
-      id: projectId
-    }
-  });
 
   // Web3
   const { account, chainId } = useWeb3React();
@@ -45,7 +39,7 @@ function EditMyProject({ projectId }) {
       if (verifyMessage(dataToSign, signature) === account) {
         editProject({
           variables: {
-            id: projectId,
+            id: project.id,
             data: {
               isPublic: values.isPublic,
               details: {
@@ -95,11 +89,7 @@ function EditMyProject({ projectId }) {
         }
       }
     }
-  }, [projectId, project, account, chainId]);
-
-  if (loading) {
-    return null;
-  }
+  }, [project, account, chainId]);
 
   return (
     <EditMyProjectTemplate
@@ -120,10 +110,49 @@ function EditMyProject({ projectId }) {
   );
 }
 
+export const GET_PROJECT_DETAILS = gql`
+  query GetProject($id: ID!) {
+    project(id: $id) {
+      id
+      title
+      photoUrl
+      createdAt
+      isPublic
+      
+      details {
+        web
+        kickstarter
+        steam
+        playstation
+        xbox
+        android
+        ios
+        twitch
+        youtube
+        facebook
+        twitter
+        instagram
+        vk
+        discord
+        reddit
+        telegram
+      }
+    }
+  }
+`;
+
 export async function getServerSideProps({ params: { projectId } }) {
+  const client = createApolloClient();
+  const { data: { project } } = await client.query({
+    query: GET_PROJECT_DETAILS,
+    variables: {
+      id: projectId
+    }
+  });
+
   return {
     props: {
-      projectId
+      project
     }
   };
 }
