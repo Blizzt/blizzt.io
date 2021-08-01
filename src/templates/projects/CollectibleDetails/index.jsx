@@ -33,7 +33,7 @@ import GradeLabel from '@components/labels/GradeLabel';
 import FormField from '@forms-components/FormField';
 import Collapsible from '@components/foldouts/Collapsible';
 import MainTable from '@components/tables/MainTable';
-import TokenLabel from '@components/labels/TokenLabel';
+import TokenLabel, { tokenPriceType } from '@components/labels/TokenLabel';
 import NFTActionCard from '@components/cards/NFTActionCard';
 import ProjectSummaryCard from '@components/cards/ProjectSummaryCard';
 import UserLabel from '@components/labels/UserLabel';
@@ -47,12 +47,14 @@ import { CartOutline, FlashOutline, HourglassOutline } from 'react-ionicons';
 // Utils
 import Fetch from '@components/utils/Fetch';
 import TimeRemaining from '@components/utils/TimeRemaining';
-import { tokenPriceType } from '@components/indicators/PriceIndicator';
 
 function CollectibleDetailsTemplate({
   title,
   project,
-  collectible
+  collectible,
+
+  onClickBuy = () => {},
+  onClickRent = () => {}
 }) {
   // Attributes
   const renderAttributesList = useMemo(() => (
@@ -222,8 +224,8 @@ function CollectibleDetailsTemplate({
                       ownedAmount={nft?.acquired}
                       itemForRent={nft?.latestOffers.forRent}
                       itemForSale={nft?.latestOffers.forSale}
-                      onClickBuy={() => {}}
-                      onClickRent={() => {}}
+                      onClickBuy={offer => onClickBuy({ offer, collectible })}
+                      onClickRent={offer => onClickRent({ offer, collectible })}
                     />
                   )}
                 />
@@ -246,8 +248,8 @@ function CollectibleDetailsTemplate({
                 emptyMessage={'There are no collectibles for rent available right now.'}
                 icon={
                   <HourglassOutline
-                    width={'22px'}
-                    height={'22px'}
+                    width={'20px'}
+                    height={'20px'}
                     color={common.colors.BLACK}
                   />
                 }
@@ -270,26 +272,44 @@ export const GET_NFT_ACTIONS = gql`
       # Latest Offers
       latestOffers {
         forRent {
+          
+          # Offer Details
           id
           price
+          quantity
 
+          # Signature Identity
+          message
+          fingerprint
+          
+          # Fiat Currencies
           fiat {
             usd
           }
 
+          # Crypto Currencies
           currency {
             id
           }
         }
-
+                
         forSale {
+
+          # Offer Details
           id
           price
+          quantity
 
+          # Signature Identity
+          message
+          fingerprint
+          
+          # Fiat Currencies
           fiat {
             usd
           }
 
+          # Crypto Currencies
           currency {
             id
           }

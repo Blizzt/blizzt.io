@@ -35,6 +35,10 @@ export const Input = styled.input`
   outline: none;
 	font-size: 18px;
 	font-family: ${common.fonts.REGULAR} !important;
+
+	::placeholder {
+		font-size: 14px;
+	}
 `;
 
 export const IconContainer = styled.div`

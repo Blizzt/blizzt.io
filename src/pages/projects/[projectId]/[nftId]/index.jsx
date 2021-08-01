@@ -1,6 +1,7 @@
 // Dependencies
-import React from 'react';
+import React, { useCallback } from 'react';
 import gql from 'graphql-tag';
+import { useWeb3React } from '@web3-react/core';
 
 // Templates
 import CollectibleDetailsTemplate from '@templates/projects/CollectibleDetails';
@@ -12,12 +13,27 @@ import IPFSFetch from '@components/utils/IPFSFetch';
 // API:
 import createApolloClient from '../../../../../apollo.client';
 
+// Context
+import { useTheme } from '@styled-components/index';
+import { modalTypesId } from '@types/ui';
+
 function CollectibleDetails({ nft = null }) {
+  // Context
+  const { openModal } = useTheme();
+
   if (!nft) {
     return (
       <NotFound />
     );
   }
+
+  const onClickBuy = useCallback(async({ offer, collectible }) => {
+    openModal(modalTypesId.BUY_COLLECTIBLE, { offer, collectible });
+  }, []);
+
+  const onClickRent = useCallback((item) => {
+    console.log('RENT: ', item);
+  }, []);
 
   return (
     <IPFSFetch
@@ -31,6 +47,8 @@ function CollectibleDetails({ nft = null }) {
             ...nft
           }}
           title={`${nft.project.title} - Blizzt.io`}
+          onClickBuy={onClickBuy}
+          onClickRent={onClickRent}
         />
       )}
     />
@@ -52,6 +70,7 @@ const GET_COLLECTIBLE = gql`
         title
         nftsCount
         photoUrl
+        collectionAddress
       }
 
       # Renting Listing
