@@ -1,6 +1,7 @@
 // Dependencies
 import React, { useMemo } from 'react';
-import { useWeb3React } from '@web3-react/core';
+import { format } from 'date-fns';
+import gql from 'graphql-tag';
 
 // Layouts
 import PageLayout from '@layouts/PageLayout';
@@ -18,7 +19,9 @@ import {
   Properties,
   Property,
   PropertyName,
-  PropertyValue
+  PropertyValue,
+
+  ExpirationDate
 
 } from './styles';
 import { PageMargin } from '@styled-components/pagination';
@@ -33,6 +36,7 @@ import MainTable from '@components/tables/MainTable';
 import TokenLabel from '@components/labels/TokenLabel';
 import NFTActionCard from '@components/cards/NFTActionCard';
 import ProjectSummaryCard from '@components/cards/ProjectSummaryCard';
+import UserLabel from '@components/labels/UserLabel';
 
 // Types
 import { imageAspectRatio } from '@types/images';
@@ -41,21 +45,15 @@ import { imageAspectRatio } from '@types/images';
 import { CartOutline, FlashOutline, HourglassOutline } from 'react-ionicons';
 
 // Utils
-import { shortenHex } from '@utils/web3';
-import { format } from 'date-fns';
 import Fetch from '@components/utils/Fetch';
-import gql from 'graphql-tag';
+import TimeRemaining from '@components/utils/TimeRemaining';
+import { tokenPriceType } from '@components/indicators/PriceIndicator';
 
 function CollectibleDetailsTemplate({
   title,
   project,
   collectible
 }) {
-  // Hooks
-  const { account } = useWeb3React();
-
-  console.log({ project, collectible });
-
   // Attributes
   const renderAttributesList = useMemo(() => (
     (collectible.attributes.filter(e => e.trait_type !== 'birthday') || []).map((attribute, index) => (
@@ -91,7 +89,7 @@ function CollectibleDetailsTemplate({
         accessor: 'address'
       },
       {
-        Header: 'Availability',
+        Header: 'Available until',
         accessor: 'expirationDate'
       },
       {
@@ -108,10 +106,18 @@ function CollectibleDetailsTemplate({
 
   const saleData = useMemo(
     () => collectible?.forSale.map((sale) => ({
-      address: shortenHex(sale.user.address),
+      address: (
+        <UserLabel
+          address={sale.user.address}
+          username={sale.user.username}
+          photoUrl={sale.user.photoUrl}
+          role={sale.user.role}
+        />
+      ),
       amount: sale.quantity,
       value: (
         <TokenLabel
+          type={tokenPriceType.TABLE}
           value={sale.price}
           fiat={sale.fiat.usd}
           currencyId={sale.currency.id}
@@ -123,11 +129,25 @@ function CollectibleDetailsTemplate({
 
   const rentData = useMemo(
     () => collectible?.forRent.map((rent) => ({
-      address: shortenHex(rent.user.address),
-      expirationDate: format(new Date(rent.maxExpirationDate), 'MM/dd/yyyy hh:mm'),
+      address: (
+        <UserLabel
+          address={rent.user.address}
+          username={rent.user.username}
+          photoUrl={rent.user.photoUrl}
+          role={rent.user.role}
+        />
+      ),
+      expirationDate: (
+        <TimeRemaining to={rent.maxExpirationDate}>
+          {({ remaining }) => (
+            <ExpirationDate>{remaining}</ExpirationDate>
+          )}
+        </TimeRemaining>
+      ),
       amount: rent.quantity,
       value: (
         <TokenLabel
+          type={tokenPriceType.TABLE}
           value={rent.price}
           fiat={rent.fiat.usd}
           currencyId={rent.currency.id}
@@ -199,7 +219,6 @@ function CollectibleDetailsTemplate({
                   }}
                   onRender={({ nft = {} }) => (
                     <NFTActionCard
-                      userAddress={account}
                       ownedAmount={nft?.acquired}
                       itemForRent={nft?.latestOffers.forRent}
                       itemForSale={nft?.latestOffers.forSale}

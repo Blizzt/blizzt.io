@@ -21,8 +21,9 @@ const common = {
     GRAY_HARD: '#767a82',
 
     GREEN: '#5DD246',
-    GREEN_SOFT: '#4dc336',
-    GREEN_LIGHT: '#e7f9e3',
+    GREEN_HARD: '#40b12a',
+    GREEN_SOFT: '#a5d49f',
+    GREEN_LIGHT: '#f8fff7',
 
     RED: '#e86060',
     RED_LIGHT: '#ffe0e0',
@@ -36,6 +37,11 @@ const common = {
     VERY_RARE: '#D133D6',
     EXTREMELY_RARE: '#E4AA23',
     UNIQUE_COLLECTIBLE: '#FE4747',
+
+    ROLE_USER: '#000',
+    ROLE_ADMIN: '#f1118d',
+    ROLE_PARTNER: '#9320ce',
+    ROLE_STUDIO: '#174fec',
 
     COLOR_FACEBOOK: '#3b5999',
     COLOR_TWITTER: '#55acee',

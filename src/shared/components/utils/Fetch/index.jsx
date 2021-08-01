@@ -22,8 +22,6 @@ function Fetch({
 
   const withError = !(error === undefined);
 
-  console.log({ loading, withError, data, error });
-
   return onRender(withError ? null : data, withError);
 }
 

@@ -4,15 +4,6 @@ import { PageContainer, PageMargin } from '@styled-components/pagination';
 import { isMobile } from '@styled-components/functions';
 import { common } from '@styled-components/common';
 
-export const styles = {
-  navigationList: {
-    borderLeft: `1px dashed ${common.colors.GRAY_SEMI_LIGHT}`
-  },
-  fundingIndicator: {
-    marginTop: '2rem'
-  }
-};
-
 export const Layout = styled(PageContainer)`
   &:before {
     content: "";
@@ -56,11 +47,20 @@ export const Container = styled(PageMargin)`
   ${isMobile(`
 		border-radius: 0px;
 	`)}
+
+	@media screen and (min-width: 0px) and (max-width: 1400px) {
+		border-radius: 0px;
+	}
 `;
 
-export const Left = styled.div``;
-
-export const Right = styled.div``;
+export const Navigator = styled.div`
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-row-gap: 16px;
+	border-left: 1px dashed ${common.colors.GRAY_SEMI_LIGHT};
+	grid-auto-rows: minmax(min-content, max-content);
+	padding: 22px 16px 0;
+`;
 
 export const ContainerInner = styled.div`
   padding: 32px;
@@ -70,6 +70,7 @@ export const Header = styled.div`
 	display: grid;
 	grid-template-columns: 1fr 0.8fr;
   overflow: hidden;
+  grid-auto-rows: minmax(min-content, max-content);
 	
 	${isMobile(`
 		grid-template-columns: 1fr;
@@ -78,6 +79,10 @@ export const Header = styled.div`
 
 export const Data = styled.div`
   padding: 2em;
+
+	${isMobile(`
+		padding: 2rem 0 0;
+	`)}
 `;
 
 export const Title = styled.h1`
@@ -96,9 +101,13 @@ export const Description = styled.p`
 
 export const Body = styled.div`
   display: grid;
-  grid-template-columns: 1fr 0.4fr;
+  grid-template-columns: 1fr 400px;
 	padding: 8px;
   box-shadow: rgb(226 229 231) 0px -12px 10px -9px;
+
+	${isMobile(`
+  	grid-template-columns: 1fr;
+	`)}
 `;
 
 export const Author = styled.div`
@@ -115,13 +124,12 @@ export const AuthorImage = styled.div`
 `;
 
 export const AuthorLabel = styled.span`
-	margin-left: 12px;
+	margin: 0 14px;
 	font-size: 14px;
   display: flex;
   flex-grow: 1;
   flex-direction: column;
 	color: ${common.colors.PRIMARY};
-  
 `;
 
 export const Address = styled.a`
@@ -140,6 +148,6 @@ export const Address = styled.a`
 `;
 
 export const FundingImage = styled.img`
-  width: 48px;
-  height: 48px;
+  width: 42px;
+  height: 42px;
 `;

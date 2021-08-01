@@ -16,6 +16,9 @@ export const Icon = styled.img``;
 export const PriceValue = styled.div`
   font-size: 16px;
   font-family: ${common.fonts.BOLD};
+	display: flex;
+	align-items: flex-end;
+	line-height: 16px;
 `;
 
 export const SubLabel = styled.div`
@@ -31,6 +34,12 @@ export const SubLabel = styled.div`
 	&:after {
 		content: "]";
 	}
+`;
+
+export const Symbol = styled.span`
+	padding-left: 4px;
+	font-size: 12px;
+	font-family: ${common.fonts.CODE_BOLD};
 `;
 
 export const Layout = styled.div`
@@ -49,8 +58,8 @@ export const Layout = styled.div`
 				}
 				
 				${Icon} {
-					width: 22px;
-					height: 22px;
+					width: 20px;
+					height: 20px;
 					margin-right: 12px;
 				}
 				

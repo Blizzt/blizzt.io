@@ -6,6 +6,7 @@ export const Layout = styled.div`
   border: 1px dashed  ${common.colors.GREEN_SOFT};
   padding: 22px;
   border-radius: 8px;
+  background: ${common.colors.GREEN_LIGHT};
 `;
 
 export const Block = styled.div`
@@ -16,7 +17,7 @@ export const Block = styled.div`
 
 export const Current = styled.h3`
   font-size: 18px;
-  color: ${common.colors.GREEN_SOFT};
+  color: ${common.colors.GREEN};
   font-family: ${common.fonts.BOLD};
 `;
 

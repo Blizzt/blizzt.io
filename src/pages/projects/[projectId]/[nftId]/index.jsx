@@ -58,6 +58,9 @@ const GET_COLLECTIBLE = gql`
       forRent {
         user {
           address
+          username
+          photoUrl
+          role
         }
         quantity
         price
@@ -84,6 +87,9 @@ const GET_COLLECTIBLE = gql`
       forSale {
         user {
           address
+          username
+          photoUrl
+          role
         }
         quantity
         price

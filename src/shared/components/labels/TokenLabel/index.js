@@ -8,7 +8,8 @@ import {
   Icon,
   PriceData,
   PriceValue,
-  SubLabel
+  SubLabel,
+  Symbol
 } from './styles';
 import { Medium } from '@styled-components/text';
 
@@ -38,6 +39,9 @@ function TokenLabel({
 						displayType={'text'}
 						thousandSeparator={true}
 					/>
+          <Symbol>
+            {currencyTypesData[currencyId].symbol}
+          </Symbol>
 					{valueLabel && <Medium>{valueLabel}</Medium>}
 				</PriceValue>
 				{fiat &&

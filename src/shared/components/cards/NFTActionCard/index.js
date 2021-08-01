@@ -38,7 +38,6 @@ const viewModesId = {
 };
 
 function NFTActionCard({
-  userAddress = null,
   ownedAmount = null,
   itemForRent = null,
   itemForSale = null,
@@ -57,8 +56,7 @@ function NFTActionCard({
 			{(itemForSale || itemForRent) && (
 				<ViewingAction
 					onClick={() => setCurrentViewMode(viewModesId.BUYER)}
-					isActive={currentViewMode === viewModesId.BUYER}
-				>
+					isActive={currentViewMode === viewModesId.BUYER}>
 					Buy / Rent
 				</ViewingAction>
 			)}
@@ -66,8 +64,7 @@ function NFTActionCard({
 			{hasCollectibles && (
 				<ViewingAction
 					onClick={() => setCurrentViewMode(viewModesId.OWNER)}
-					isActive={currentViewMode === viewModesId.OWNER}
-				>
+					isActive={currentViewMode === viewModesId.OWNER}>
 					Sell / Rent
 				</ViewingAction>
 			)}
@@ -83,7 +80,7 @@ function NFTActionCard({
 						<PriceRow>
 							<TokenLabel
 								type={tokenPriceType.NORMAL}
-								currency={itemForSale ? itemForSale.currency.id : currencyTypesId.ETH}
+								currencyId={itemForSale ? itemForSale.currency.id : currencyTypesId.ETH}
 								value={!itemForSale ? '0.000000' : itemForSale.price}
 								fiat={!itemForSale ? '0.00' : itemForSale.fiat.usd}
 							/>
@@ -94,7 +91,7 @@ function NFTActionCard({
 						<PriceRow>
 							<TokenLabel
 								type={tokenPriceType.NORMAL}
-								currency={itemForRent ? itemForRent.currency.id : currencyTypesId.ETH}
+								currencyId={itemForRent ? itemForRent.currency.id : currencyTypesId.ETH}
 								value={!itemForRent ? '0.000000' : itemForRent.price}
 								valueLabel={'/ hour'}
 								fiat={!itemForRent ? '0.00' : itemForRent.fiat.usd}

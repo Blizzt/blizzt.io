@@ -7,7 +7,7 @@ import { animated } from 'react-spring';
 export const Layout = styled(animated.div)`
   background: #ffffffe6;
   box-shadow: 0 0 6px 0 #676f7745;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: default;
   z-index: 10;
   overflow: hidden;
@@ -17,7 +17,7 @@ export const Layout = styled(animated.div)`
 export const Flex = styled.div`
   display: flex;
   flex-direction: row;
-  padding: 18px;
+  padding: 22px;
   width: max-content;
 `;
 

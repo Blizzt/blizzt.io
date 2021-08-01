@@ -8,7 +8,7 @@ export const List = styled.ul`
 `;
 
 export const ListItem = styled.li`
-  padding: 8px 16px;
+  padding: 8px 0;
 `;
 
 export const Label = styled.div`
@@ -56,7 +56,7 @@ export const Item = styled.a`
 export const Title = styled.h3`
   font-size: 12px;
   text-transform: uppercase;
-  padding: 16px;
+  padding: 16px 0;
   font-family: ${common.fonts.MEDIUM};
   color: ${common.colors.PRIMARY_DARKEN};
 `;

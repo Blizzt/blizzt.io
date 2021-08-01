@@ -103,3 +103,9 @@ export const PropertyValue = styled.span`
   color: ${common.colors.PRIMARY_PRESSED};
 	font-family: ${common.fonts.CODE_REGULAR};
 `;
+
+export const ExpirationDate = styled.span`
+	color: ${common.colors.BLACK};
+	font-family: ${common.fonts.MEDIUM};
+	font-size: 12px;
+`;

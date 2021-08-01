@@ -11,8 +11,7 @@ import {
   Title,
   Description,
 
-  Left,
-  Right,
+  Navigator,
 
   Container,
   Body,
@@ -23,10 +22,7 @@ import {
   AuthorImage,
   ContainerInner,
   TopContainer,
-  FundingImage,
-
-  styles
-
+  FundingImage
 } from './styles';
 
 // Assets
@@ -78,75 +74,46 @@ function ProjectDetailsTemplate({
     router.push(`/projects/${project.id}/edit`);
   }, [project]);
 
-  const renderLeftSide = useMemo(() => (
-    <Left>
-      <ContainerInner>
-        <Header>
-          <MainImage radius={6} source={project.photoUrl} />
-          <Data>
-            <Title>{project.title}</Title>
-            <Description>{project.description}</Description>
-            <Author>
-              <AuthorImage>
-                <ProfileImage
-                  source={project.creator.photoUrl}
-                  address={project.creator.address}
-                  aspectRatio={imageAspectRatio.ONE}
-                  alt={project.creator.address}
-                />
-              </AuthorImage>
-              <AuthorLabel>
-                Created by {project.creator.username}
-                <Address target={'_blank'} href={formatEtherscanLink('Account', project.chainId, project.creator.address)}>
-                  {shortenHex(project.creator.address, 4)}
-                </Address>
-              </AuthorLabel>
-
-              {isOwnerOfProject && (
-                <MainButton
-                  type={buttonTypesId.PRIMARY}
-                  caption={'Edit Project'}
-                  onClick={onClickEditMyProject}
-                />
-              )}
-            </Author>
-
-            <FundingIndicator
-              customStyleContainer={styles.fundingIndicator}
-              icon={
-                <FundingImage src={MoneyThree} alt={'Funding Status'} />
-              }
-              max={250000}
-              current={100000}
-              bottom={(
-                <ProgressBarIndicator
-                  color={common.colors.GREEN_SOFT}
-                  indicatorColor={common.colors.GREEN}
-                  max={project.collectiblesCount}
-                  current={project.collectiblesSold}
-                  label={(max, current) => `${current} NFT have been sold out of the total of ${max} required`}
-                />
-              )}
-            />
-          </Data>
-        </Header>
-      </ContainerInner>
-    </Left>
-  ), [project, isOwnerOfProject]);
-
-  const renderRightSide = useMemo(() => (
-    <Right>
-
-    </Right>
-  ), [project]);
-
   return (
     <PageLayout title={`${project.title} - Blizzt.io`}>
       <Layout background={project.photoUrl}>
         <Container>
           <TopContainer>
-            {renderLeftSide}
-            {renderRightSide}
+            <ContainerInner>
+              <Header>
+                <div>
+                  <MainImage radius={6} source={project.photoUrl} />
+                </div>
+                <Data>
+                  <Title>{project.title}</Title>
+                  <Description>{project.description}</Description>
+                  <Author>
+                    <AuthorImage>
+                      <ProfileImage
+                        source={project.creator.photoUrl}
+                        address={project.creator.address}
+                        aspectRatio={imageAspectRatio.ONE}
+                        alt={project.creator.address}
+                      />
+                    </AuthorImage>
+                    <AuthorLabel>
+                      Created by {project.creator.username}
+                      <Address target={'_blank'} href={formatEtherscanLink('Account', project.chainId, project.creator.address)}>
+                        {shortenHex(project.creator.address, 4)}
+                      </Address>
+                    </AuthorLabel>
+
+                    {isOwnerOfProject && (
+                      <MainButton
+                        type={buttonTypesId.PRIMARY}
+                        caption={'Edit Project'}
+                        onClick={onClickEditMyProject}
+                      />
+                    )}
+                  </Author>
+                </Data>
+              </Header>
+            </ContainerInner>
           </TopContainer>
           <Body>
             {/* Navigator Container */}
@@ -155,12 +122,29 @@ function ProjectDetailsTemplate({
             </ContainerInner>
 
             {/* Navigation List */}
-            <NavigationList
-              title={'About the project'}
-              data={sectionList}
-              customStyleContainer={styles.navigationList}
-              baseUrl={`/projects/${project.id}`}
-            />
+            <Navigator>
+              <FundingIndicator
+                icon={
+                  <FundingImage src={MoneyThree} alt={'Funding Status'} />
+                }
+                max={250000}
+                current={100000}
+                bottom={(
+                  <ProgressBarIndicator
+                    color={common.colors.GREEN_HARD}
+                    indicatorColor={common.colors.GREEN}
+                    max={project.collectiblesCount}
+                    current={project.collectiblesSold}
+                    label={(max, current) => `${current} NFT have been sold out of the total of ${max} required`}
+                  />
+                )}
+              />
+              <NavigationList
+                title={'About the project'}
+                data={sectionList}
+                baseUrl={`/projects/${project.id}`}
+              />
+            </Navigator>
           </Body>
         </Container>
       </Layout>
