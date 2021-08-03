@@ -11,7 +11,6 @@ import SectionTitle from '@components/titles/SectionTitle';
 import RewardsEditContainer, { modeTypesId } from '@containers/RewardsEditContainer';
 
 // API
-import CollectibleAPI from '@api/collectible';
 import createApolloClient from '../../../../../apollo.client';
 
 // Hooks
@@ -19,6 +18,7 @@ import { useTheme } from '@styled-components/index';
 
 // Types
 import { modalTypesId } from '@types/ui';
+import NFT from '@contracts/operations/NFT';
 
 function EditMyProjectCollectibles({ project }) {
   const { openModal, closeModal } = useTheme();
@@ -26,11 +26,7 @@ function EditMyProjectCollectibles({ project }) {
 
   const handleNFTCreationSubmit = useCallback(async(collectible, formikHelpers, actionButtonRef, setMode) => {
     await openModal(modalTypesId.CREATE_MY_COLLECTIBLE_PROCESS);
-    await CollectibleAPI.create({
-      chainId,
-      projectId: project.id,
-      collectible
-    });
+    await NFT.mint(chainId, project.id, collectible);
     await closeModal();
     await setMode(modeTypesId.VIEWING_MODE);
   }, [chainId, account, project]);
