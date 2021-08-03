@@ -12,12 +12,14 @@ export const CREATE_PROJECT = gql`
     $description: String!
     $categoryId: Int!
     $photo: Upload!
+    $chainId: Int!
   ) {
     createProject(
       title: $title
       description: $description
       categoryId: $categoryId
       photo: $photo
+      chainId: $chainId
     ) {
       id
     }

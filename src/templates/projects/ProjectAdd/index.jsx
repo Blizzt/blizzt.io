@@ -30,12 +30,15 @@ function ProjectAddTemplate({ createProject = () => {} }) {
     formikHelpers.setSubmitting(true);
     actionButtonRef.changeToLoading('Adding project...');
 
+    console.log({ chainId });
+
     createProject({
       variables: {
         title: project.name,
         categoryId: project.categoryId,
         description: project.description,
-        photo: project.photo
+        photo: project.photo,
+        chainId
       }
     }).then(({ data: { createProject: project } }) => {
       actionButtonRef.changeToComplete('Project successfully created!');
