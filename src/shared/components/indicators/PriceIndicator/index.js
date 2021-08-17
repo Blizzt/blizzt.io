@@ -23,7 +23,7 @@ export const tokenPriceType = {
 
 function PriceIndicator({
   value,
-  dollars = null,
+  fiat = null,
   valueLabel = null,
   type = tokenPriceType.SMALL,
   currency = currencyTypesId.ETH
@@ -40,11 +40,11 @@ function PriceIndicator({
 					/>
 					{valueLabel && <Medium>{valueLabel}</Medium>}
 				</PriceValue>
-				{dollars &&
+				{fiat &&
 					<SubLabel>
 						<NumberFormat
 							prefix={'$'}
-							value={dollars}
+							value={fiat}
 							displayType={'text'}
 							thousandSeparator={true}
 						/>

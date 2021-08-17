@@ -26,8 +26,8 @@ function RewardsList({ onClick = () => {}, collectibles = [] }) {
                 pictureUrl={data.image}
                 title={data.name}
                 description={data.description}
-                forSale={item.forSale}
-                forRent={item.forRent}
+                forSale={item.latestOffers.forSale}
+                forRent={item.latestOffers.forRent}
                 units={item.mintedAmount}
                 onClick={() => onClick(item)}
               />

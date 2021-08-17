@@ -46,9 +46,9 @@ function NFTCard({
           <div>
             <Label>Sale price</Label>
             <TokenPrice
-              currency={forSale.paymentToken}
+              currency={forSale.currency.id}
               value={forSale.price}
-              dollars={forSale.priceFiat}
+              fiat={forSale.fiat.usd}
             />
           </div>
         )}
@@ -56,9 +56,9 @@ function NFTCard({
           <div>
             <Label>Rent per hour</Label>
             <TokenPrice
-              currency={forRent.paymentToken}
+              currency={forSale.currency.id}
               value={forRent.price}
-              dollars={forRent.priceFiat}
+              fiat={forRent.fiat.usd}
             />
           </div>
         )}

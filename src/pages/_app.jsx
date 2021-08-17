@@ -17,6 +17,7 @@ import '@uiw/react-md-editor/dist/markdown-editor.css';
 import '@uiw/react-markdown-preview/dist/markdown.css';
 import 'react-multi-carousel/lib/styles.css';
 import 'react-datepicker/dist/react-datepicker.css';
+import 'react-image-crop/dist/ReactCrop.css';
 
 function getLibrary(provider) {
   return new Web3Provider(provider);

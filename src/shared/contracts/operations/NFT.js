@@ -24,238 +24,248 @@ import { getDisplayType, IPFS } from '@utils/web3';
 const NFT = {
   buy: function(chainId, offerId, quantity) {
     return new Promise(async(resolve, reject) => {
-      // API initialization.
-      const API = await createApolloClient();
+      try {
+        // API initialization.
+        const API = await createApolloClient();
 
-      // We get the updated offer information.
-      const { data: { offer }, networkStatus } = await API.query({
-        query: GET_OFFER_BY_ID,
-        variables: {
-          id: Number(offerId)
-        }
-      });
-
-      // Error if the offer cannot be obtained
-      if (networkStatus === NetworkStatus.error) {
-        return reject(new Error('Unable to get current offer.'));
-      }
-
-      // Error if offer has changed to INACTIVE status during checkout.
-      if (offer.state === offerStatesId.INACTIVE) {
-        return reject(new Error('The offer is already inactive'));
-      }
-
-      // Error if the number of available NFTs has changed and is less than requested.
-      if (quantity > offer.quantity) {
-        return reject(new Error('The offer no longer has the required quantity'));
-      }
-
-      // We initialize Web3
-      const web3 = new Web3(window.ethereum);
-
-      const {
-        methods: {
-          sellERC1155
-        }
-      } = new web3.eth.Contract(NFTMarketplace, Addresses[chainId].NFTMarketplace);
-
-      const buyLength = (offer.message.length / 2) - 1;
-      const paramLength = web3.utils.asciiToHex(buyLength.toString());
-
-      const buyItem = sellERC1155(offer.message, paramLength, Number(quantity), offer.fingerprint);
-      const price = offer.price * quantity;
-
-      const isEthereum = currencyTypesData[offer.currency.id].code === currencyTypesData[currencyTypesId.ETH].code;
-
-      console.log({ isEthereum });
-
-      if (!isEthereum) {
-        const {
-          methods: {
-            allowance,
-            approve
+        // We get the updated offer information.
+        const { data: { offer }, networkStatus } = await API.query({
+          query: GET_OFFER_BY_ID,
+          variables: {
+            id: Number(offerId)
           }
-        } = new web3.eth.Contract(IERC20, currencyTypesData[offer.currency.id].code);
-
-        const allowedAmountFx = await allowance(window.ethereum.selectedAddress, Addresses[chainId].NFTMarketplace);
-        console.log({ allowedAmountFx });
-
-        const allowedAmount = await allowedAmountFx.call({
-          from: window.ethereum.selectedAddress
         });
 
-        console.log({ allowedAmount });
+        // Error if the offer cannot be obtained
+        if (networkStatus === NetworkStatus.error) {
+          return reject(new Error('Unable to get current offer.'));
+        }
 
-        if (web3.utils.toWei(price.toString()) > allowedAmount) {
-          const approveFx = await approve(Addresses[chainId].NFTMarketplace, web3.utils.toWei(price.toString()));
-          const tx = approveFx.send({
+        // Error if offer has changed to INACTIVE status during checkout.
+        if (offer.state === offerStatesId.INACTIVE) {
+          return reject(new Error('The offer is already inactive'));
+        }
+
+        // Error if the number of available NFTs has changed and is less than requested.
+        if (quantity > offer.quantity) {
+          return reject(new Error('The offer no longer has the required quantity'));
+        }
+
+        // We initialize Web3
+        const web3 = new Web3(window.ethereum);
+
+        const {
+          methods: {
+            sellERC1155
+          }
+        } = new web3.eth.Contract(NFTMarketplace, Addresses[chainId].NFTMarketplace);
+
+        const buyLength = (offer.message.length / 2) - 1;
+        const paramLength = web3.utils.asciiToHex(buyLength.toString());
+
+        const buyItem = sellERC1155(offer.message, paramLength, Number(quantity), offer.fingerprint);
+        const price = offer.price * quantity;
+
+        const isEthereum = currencyTypesData[offer.currency.id].code === currencyTypesData[currencyTypesId.ETH].code;
+
+        console.log({ isEthereum });
+
+        if (!isEthereum) {
+          const {
+            methods: {
+              allowance,
+              approve
+            }
+          } = new web3.eth.Contract(IERC20, currencyTypesData[offer.currency.id].code);
+
+          const allowedAmountFx = await allowance(window.ethereum.selectedAddress, Addresses[chainId].NFTMarketplace);
+          console.log({ allowedAmountFx });
+
+          const allowedAmount = await allowedAmountFx.call({
             from: window.ethereum.selectedAddress
           });
 
-          console.log(tx);
+          console.log({ allowedAmount });
+
+          if (web3.utils.toWei(price.toString()) > allowedAmount) {
+            const approveFx = await approve(Addresses[chainId].NFTMarketplace, web3.utils.toWei(price.toString()));
+            const tx = approveFx.send({
+              from: window.ethereum.selectedAddress
+            });
+
+            console.log(tx);
+          }
         }
-      }
 
-      const tx = await buyItem.send({
-        from: window.ethereum.selectedAddress,
-        value: isEthereum ? web3.utils.toWei(price.toString()) : 0
-      });
+        const tx = await buyItem.send({
+          from: window.ethereum.selectedAddress,
+          value: isEthereum ? web3.utils.toWei(price.toString()) : 0
+        });
 
-      const { networkStatus: buyNetworkStatus } = await API.query({
-        query: BUY_NFT,
-        variables: {
-          offerId: offer.id,
-          amount: Number(quantity)
+        const { networkStatus: buyNetworkStatus } = await API.query({
+          query: BUY_NFT,
+          variables: {
+            offerId: offer.id,
+            amount: Number(quantity)
+          }
+        });
+
+        if (buyNetworkStatus === NetworkStatus.error) {
+          /* Critical error: You have made the purchase but it has not been transacted.
+             Evaluate how this error can be considered, and to what extent it can be resolved. */
         }
-      });
 
-      if (buyNetworkStatus === NetworkStatus.error) {
-        /* Critical error: You have made the purchase but it has not been transacted.
-           Evaluate how this error can be considered, and to what extent it can be resolved. */
+        resolve(true);
+      } catch (e) {
+        reject(e);
       }
-
-      resolve(true);
     });
   },
 
   mint: function(chainId, projectId, collectible) {
     return new Promise(async(resolve, reject) => {
-      // Apollo Client
-      const apollo = createApolloClient();
+      try {
+        // Apollo Client
+        const apollo = createApolloClient();
 
-      const { networkStatus, data: { project } = {} } = await apollo.query({
-        query: GET_PROJECT_BY_ID,
-        variables: {
-          id: projectId
+        const { networkStatus, data: { project } = {} } = await apollo.query({
+          query: GET_PROJECT_BY_ID,
+          variables: {
+            id: projectId
+          }
+        });
+
+        if (networkStatus === NetworkStatus.error) {
+          throw new Error({
+            message: 'Could not get current project.'
+          });
         }
-      });
 
-      if (networkStatus === NetworkStatus.error) {
-        throw new Error({
-          message: 'Could not get current project.'
+        // 1. Upload IPFS image
+        const imageCid = await IPFS.add({
+          content: collectible.photo
         });
-      }
 
-      // 1. Upload IPFS image
-      const imageCid = await IPFS.add({
-        content: collectible.photo
-      });
+        // 2. Build the file link
+        const nftIPFS = `ipfs://${imageCid.path}`;
 
-      // 2. Build the file link
-      const nftIPFS = `ipfs://${imageCid.path}`;
+        // 3. Build the metadata
+        const attributes = collectible.properties.map(function(item) {
+          return {
+            display_type: getDisplayType(item),
+            trait_type: item.name,
+            key: item.key,
+            value: item.value,
+            max_value: item.maxValue
+          };
+        });
 
-      // 3. Build the metadata
-      const attributes = collectible.properties.map(function(item) {
-        return {
-          display_type: getDisplayType(item),
-          trait_type: item.name,
-          key: item.key,
-          value: item.value,
-          max_value: item.maxValue
+        const metadata = {
+          name: collectible.name,
+          description: collectible.description,
+          image: nftIPFS,
+          external_url: '',
+          attributes: [
+            {
+              display_type: 'number',
+              trait_type: 'Minted units',
+              value: collectible.amount
+            },
+            {
+              display_type: 'date',
+              trait_type: 'birthday',
+              value: getUnixTime(new Date())
+            },
+            ...attributes
+          ]
         };
-      });
 
-      const metadata = {
-        name: collectible.name,
-        description: collectible.description,
-        image: nftIPFS,
-        external_url: '',
-        attributes: [
-          {
-            display_type: 'number',
-            trait_type: 'Minted units',
-            value: collectible.amount
-          },
-          {
-            display_type: 'date',
-            trait_type: 'birthday',
-            value: getUnixTime(new Date())
-          },
-          ...attributes
-        ]
-      };
+        // 4. Upload the metadata to IPFS
+        const metadataCid = await IPFS.add(Buffer.from(JSON.stringify(metadata)));
+        const metadataCidIpfs = `${metadataCid.path}`;
 
-      // 4. Upload the metadata to IPFS
-      const metadataCid = await IPFS.add(Buffer.from(JSON.stringify(metadata)));
-      const metadataCidIpfs = `${metadataCid.path}`;
+        const nftId = project.nftsCount + 1;
+        let collectionAddress = '';
 
-      const nftId = project.nftsCount + 1;
-      let collectionAddress = '';
-
-      // Web3
-      const web3 = new Web3(window.ethereum);
-
-      if (project.collectionAddress) {
-        // Mint the collectibles collectibles
-        const {
-          methods: {
-            mint
-          }
-        } = new web3.eth.Contract(NFTCollection, project.collectionAddress);
-
-        const mintItem = await mint(window.ethereum.selectedAddress, nftId, collectible.amount, metadataCidIpfs);
-        const tx = await mintItem.send({
-          from: window.ethereum.selectedAddress
-        });
-
-        collectionAddress = project.collectionAddress;
-      } else {
+        // Web3
+        const web3 = new Web3(window.ethereum);
         let tx = {};
-        const contractAddress = Addresses[chainId.toString()].NFTCollectionFactory;
 
-        const {
-          methods: {
-            createNFTCollectionWithFirstItem
-          }
-        } = new web3.eth.Contract(NFTCollectionFactory, contractAddress);
-
-        const collection = await createNFTCollectionWithFirstItem('ipfs://', nftId, collectible.amount, metadataCidIpfs);
-
-        const {
-          events: {
-            NFTCollectionCreated: {
-              returnValues: {
-                tokenAddress
-              }
+        if (project.collectionAddress) {
+          // Mint the collectibles collectibles
+          const {
+            methods: {
+              mint
             }
-          }
-        } = await collection.send({
-          from: window.ethereum.selectedAddress
-        })
-          .on('transactionHash', function(hash) {
-            console.log('hash:', hash);
-          })
-          .on('receipt', function(receipt) {
-            console.log('receipt:', receipt);
-            tx = receipt;
-          })
-          .on('error', function(error) {
-            console.log('error:', error);
+          } = new web3.eth.Contract(NFTCollection, project.collectionAddress);
+
+          const mintItem = await mint(window.ethereum.selectedAddress, nftId, collectible.amount, metadataCidIpfs);
+          tx = await mintItem.send({
+            from: window.ethereum.selectedAddress
           });
 
-        collectionAddress = tokenAddress;
-      }
+          collectionAddress = project.collectionAddress;
 
-      const IPFSAddress = `ipfs://${metadataCidIpfs}`;
+          console.log({ tx });
+        } else {
+          const contractAddress = Addresses[chainId.toString()].NFTCollectionFactory;
 
-      const { networkStatus: mintNFTNetworkStatus } = await apollo.mutate({
-        mutation: MINT_NFT,
-        variables: {
-          nftId,
-          projectId,
-          collectionAddress,
-          metadata: JSON.stringify(metadata),
-          IPFSAddress,
-          amount: collectible.amount
+          const {
+            methods: {
+              createNFTCollectionWithFirstItem
+            }
+          } = new web3.eth.Contract(NFTCollectionFactory, contractAddress);
+
+          const collection = await createNFTCollectionWithFirstItem('ipfs://', nftId, collectible.amount, metadataCidIpfs);
+
+          const {
+            events: {
+              NFTCollectionCreated: {
+                returnValues: {
+                  tokenAddress
+                }
+              }
+            }
+          } = await collection.send({
+            from: window.ethereum.selectedAddress
+          })
+            .on('transactionHash', function(hash) {
+              console.log('hash:', hash);
+            })
+            .on('receipt', function(receipt) {
+              console.log('receipt:', receipt);
+              tx = receipt;
+            })
+            .on('error', function(error) {
+              console.log('error:', error);
+            });
+
+          collectionAddress = tokenAddress;
         }
-      });
 
-      if (mintNFTNetworkStatus === NetworkStatus.error) {
-        /* Critical error: You have made the purchase but it has not been transacted.
-          Evaluate how this error can be considered, and to what extent it can be resolved. */
+        const IPFSAddress = `ipfs://${metadataCidIpfs}`;
+
+        const { networkStatus: mintNFTNetworkStatus } = await apollo.mutate({
+          mutation: MINT_NFT,
+          variables: {
+            nftId,
+            projectId,
+            collectionAddress,
+            metadata: JSON.stringify(metadata),
+            IPFSAddress,
+            amount: collectible.amount
+          }
+        });
+
+        if (mintNFTNetworkStatus === NetworkStatus.error) {
+          /* Critical error: You have made the purchase but it has not been transacted.
+            Evaluate how this error can be considered, and to what extent it can be resolved. */
+        }
+
+        resolve(true);
+      } catch (e) {
+        reject(e);
       }
-
-      resolve(true);
     });
   }
 };

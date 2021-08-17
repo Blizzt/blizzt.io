@@ -24,6 +24,8 @@ function ProjectDetailsCollectibles({ project }) {
     router.push(`/projects/${project.id}/${item.nftId}`);
   }, []);
 
+  console.log({ project });
+
   return (
     <ProjectDetailsTemplate
       project={project}
@@ -51,6 +53,35 @@ export const GET_PROJECT_COLLECTIBLES = gql`
         IPFSAddress
         metadata
         mintedAmount
+
+
+        latestOffers {
+          forRent {
+            id
+            price
+            
+            fiat {
+              usd
+            }
+
+            currency {
+              id
+            }
+          }
+          
+          forSale {
+            id
+            price
+
+            fiat {
+              usd
+            }
+
+            currency {
+              id
+            }
+          }
+        }
       }
 
       creator {

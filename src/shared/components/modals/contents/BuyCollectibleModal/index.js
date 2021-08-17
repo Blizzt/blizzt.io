@@ -57,7 +57,7 @@ function BuyCollectibleModal({ closeModal, data: { offer, collectible } }) {
         actionButtonRef.current.changeToComplete('NFT Successfully Acquired');
       }).catch((e) => {
       	console.error(e);
-        actionButtonRef.current.changeToError('Operación fallida');
+        actionButtonRef.current.changeToError('Operation failed');
       });
     }
   });
