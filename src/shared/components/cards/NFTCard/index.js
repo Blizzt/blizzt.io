@@ -25,12 +25,12 @@ function NFTCard({
   pictureUrl,
   title,
   units,
-  forSale = {},
-  forRent = {},
+  forSale = null,
+  forRent = null,
   onClick = () => {}
 }) {
   const renderPrice = useMemo(() => {
-    const unAvailable = (!Object.keys(forRent).length && !Object.keys(forSale).length);
+    const unAvailable = (!forRent && !forSale);
 
     if (unAvailable) {
       return (
@@ -42,7 +42,7 @@ function NFTCard({
 
     return (
       <Price>
-        {Object.keys(forSale).length > 0 && (
+        {forSale && Object.keys(forSale).length > 0 && (
           <div>
             <Label>Sale price</Label>
             <TokenPrice
@@ -52,7 +52,7 @@ function NFTCard({
             />
           </div>
         )}
-        {Object.keys(forRent).length > 0 && (
+        {forRent && Object.keys(forRent).length > 0 && (
           <div>
             <Label>Rent per hour</Label>
             <TokenPrice

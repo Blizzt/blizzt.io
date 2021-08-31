@@ -61,6 +61,34 @@ export const GET_PROJECT_DETAILS = gql`
         IPFSAddress
         metadata
         mintedAmount
+
+        latestOffers {
+          forRent {
+            id
+            price
+
+            fiat {
+              usd
+            }
+
+            currency {
+              id
+            }
+          }
+
+          forSale {
+            id
+            price
+
+            fiat {
+              usd
+            }
+
+            currency {
+              id
+            }
+          }
+        }
       }
     }
   }
@@ -74,7 +102,6 @@ export async function getServerSideProps({ params: { projectId } }) {
       id: projectId
     }
   });
-
   return {
     props: {
       project

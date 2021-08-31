@@ -22,6 +22,7 @@ function RewardsList({ onClick = () => {}, collectibles = [] }) {
           metadata={item.metadata}
           onRender={({ data }) => (
             <>
+              {console.log(data)}
               <NFTCard
                 pictureUrl={data.image}
                 title={data.name}

@@ -51,34 +51,35 @@ function IPFSFetch({
 
   useIsomorphicLayoutEffect(() => {
     if (endpoint) {
-      try {
-        // Set Loading to True
-        dispatch({ type: actions.SET_LOADING, payload: true });
+      // Set Loading to True
+      dispatch({ type: actions.SET_LOADING, payload: true });
 
-        async function fetch() {
-          const metadata = await IPFS.get(endpoint);
-          return metadata;
-        }
-
-        fetch().then((data) => {
-          // Load Metadata or Data with IPFS
-          const payload = (data && data.image) ? data : JSON.parse(metadata);
-
-          payload.image = `https://ipfs.io/ipfs/${payload.image.split('//')[1]}`;
-
-          // Set Data of Response
-          dispatch({ type: actions.SET_DATA, payload });
-
-          // Set Loading to false
-          dispatch({ type: actions.SET_LOADING, payload: false });
-        });
-      } catch (e) {
-        console.error(e);
-        dispatch({ type: actions.SET_ERROR, payload: e });
-        dispatch({ type: actions.SET_LOADING, payload: false });
+      async function fetch() {
+        const mt = await IPFS.get(endpoint);
+        return mt;
       }
+
+      fetch().then((data) => {
+        // Load Metadata or Data with IPFS
+        const payload = (data && data.image) ? data : JSON.parse(metadata);
+
+        payload.image = `https://ipfs.io/ipfs/${payload.image.split('//')[1]}`;
+
+        // Set Data of Response
+        dispatch({ type: actions.SET_DATA, payload });
+
+        // Set Loading to false
+        dispatch({ type: actions.SET_LOADING, payload: false });
+      }).catch((e) => {
+        console.error(e);
+        // Set Data of Response
+        dispatch({ type: actions.SET_DATA, payload: JSON.parse(metadata) });
+
+        // Set Loading to false
+        dispatch({ type: actions.SET_LOADING, payload: false });
+      });
     }
-  }, [endpoint]);
+  }, [endpoint, metadata]);
 
   if (state.isLoading) {
     return onLoading();
