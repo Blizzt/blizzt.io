@@ -5,7 +5,6 @@ export const hexlify = (message) =>
 
 export default function usePersonalSign() {
   const { library, account } = useWeb3React();
-
   return async(message) => {
     return library.send('personal_sign', [hexlify(message), account]);
   };

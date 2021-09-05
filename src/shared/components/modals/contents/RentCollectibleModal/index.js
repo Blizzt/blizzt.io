@@ -29,7 +29,8 @@ import { Container } from '@styled-components/modals';
 import useFormValidation from '../../../../hooks/useFormValidation';
 import InputDate from '../../../inputs/InputDate';
 
-function RentCollectibleModal({ closeModal, data: { onSubmit, item } }) {
+function RentCollectibleModal({ closeModal, data: { offer, collectible } }) {
+  console.log({ offer, collectible });
   const formik = useFormik({
     initialValues: {
       amount: 1,
@@ -40,12 +41,12 @@ function RentCollectibleModal({ closeModal, data: { onSubmit, item } }) {
         const validationSchema = Yup.object().shape({
           amount: Yup.number()
             .min(1, 'The amount cannot be less than 1.')
-            .max(item.amount, `The amount cannot be more than ${item.amount}.`)
+            .max(offer.quantity, `The amount cannot be more than ${offer.quantity}.`)
             .required('You must enter a valid amount'),
 
           date: Yup.date()
             .min(new Date())
-            .max(new Date(fromUnixTime(item.expirationDate)), 'The rental date cannot exceed the expiration date.')
+            .max(new Date(fromUnixTime(offer.maxExpirationDate)), 'The rental date cannot exceed the expiration date.')
             .required('You must enter a valid date')
         });
 
@@ -56,7 +57,7 @@ function RentCollectibleModal({ closeModal, data: { onSubmit, item } }) {
     },
     onSubmit: (values, formikActions) => {
     	formik.setSubmitting(true);
-      onSubmit(values, formikActions);
+      // onSubmit(values, formikActions);
     }
   });
 
@@ -64,7 +65,7 @@ function RentCollectibleModal({ closeModal, data: { onSubmit, item } }) {
 
   const currentTransaction = useMemo(() => {
     const totalHours = differenceInHours(formik.values.date, new Date()) + 1;
-    const price = Number(item.price);
+    const price = Number(collectible.price);
     return {
     	total: parseFloat((totalHours * price) * formik.values.amount).toFixed(6),
       hours: totalHours
@@ -80,22 +81,22 @@ function RentCollectibleModal({ closeModal, data: { onSubmit, item } }) {
 			<Container padding={'2em'}>
 				<Summary>
 					<Picture>
-						<MainImage radius={8} source={item.image} aspectRatio={imageAspectRatio.ONE} />
+						<MainImage radius={8} source={collectible.image} aspectRatio={imageAspectRatio.ONE} />
 					</Picture>
 					<Data>
 						<InfoList
 							data={[
 							  {
 							    label: 'Collectible Name',
-							    value: item.name
+							    value: collectible.name
 							  },
 							  {
 							    label: 'Quantity Available',
-							    value: item.amount
+							    value: offer.quantity
 							  },
 							  {
 							    label: 'Collectible expiration',
-							    value: format(fromUnixTime(item.expirationDate), 'PPpp')
+							    value: format(fromUnixTime(offer.maxExpirationDate), 'PPpp')
 							  }
 							]}
 						/>
@@ -143,7 +144,7 @@ function RentCollectibleModal({ closeModal, data: { onSubmit, item } }) {
 							  },
 							  {
 							    label: 'Price per hour',
-							    value: item.price
+							    value: collectible.price
 							  },
 							  {
 							    label: 'Total cost',

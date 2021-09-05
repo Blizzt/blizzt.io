@@ -35,7 +35,6 @@ function SellCollectible({
 }) {
   // Hooks
   const { account } = useWeb3React();
-  const sign = usePersonalSign();
 
   // Context
   const { openModal } = useContext(ThemeContext);
@@ -49,32 +48,29 @@ function SellCollectible({
 
     // Get metamask signature
     const sellParams = web3.eth.abi.encodeParameters(['address', 'uint256', 'uint24', 'uint256', 'address', 'bool', 'uint256'], [collectible.project.collectionAddress, collectible.nftId, offer.amount, web3.utils.toWei(offer.price.toString()), currencyTypesData[offer.currency].code, offer.isBundlePack, getUnixTime(addMonths(new Date(), 12))]);
-    const fingerprint = await sign(sellParams);
+    const fingerprint = await web3.eth.personal.sign(sellParams, window.ethereum.selectedAddress);
 
-    // 2. Verify Data Signed and Signature
-    if (verifyMessage(sellParams, fingerprint) === account) {
-      putOnSaleNFT({
-        variables: {
-          nftId: collectible.nftId,
-          projectId: collectible.project.id,
-          offer: {
-            amount: Number(offer.amount),
-            price: offer.price,
-            isBundlePack: offer.isBundlePack,
-            currencyId: currencyTypesData[offer.currency].id
-          },
-          signature: {
-            message: sellParams,
-            fingerprint
-          }
+    putOnSaleNFT({
+      variables: {
+        nftId: collectible.nftId,
+        projectId: collectible.project.id,
+        offer: {
+          amount: Number(offer.amount),
+          price: offer.price,
+          isBundlePack: offer.isBundlePack,
+          currencyId: currencyTypesData[offer.currency].id
+        },
+        signature: {
+          message: sellParams,
+          fingerprint
         }
-      }).then(() => {
-        actionButtonRef.changeToComplete('Offer published successfully');
-        openModal(modalTypesId.SELL_MY_COLLECTIBLE_SUCCESS);
-      }).catch(() => {
-        actionButtonRef.changeToError('Offer not published');
-      });
-    }
+      }
+    }).then(() => {
+      actionButtonRef.changeToComplete('Offer published successfully');
+      openModal(modalTypesId.SELL_MY_COLLECTIBLE_SUCCESS);
+    }).catch(() => {
+      actionButtonRef.changeToError('Offer not published');
+    });
   }, [collectible, account]);
 
   return (

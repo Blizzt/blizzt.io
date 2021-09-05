@@ -277,7 +277,8 @@ export const GET_NFT_ACTIONS = gql`
           id
           price
           quantity
-
+          maxExpirationDate
+          
           # Signature Identity
           message
           fingerprint

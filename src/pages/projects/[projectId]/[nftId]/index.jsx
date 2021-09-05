@@ -31,8 +31,8 @@ function CollectibleDetails({ nft = null }) {
     openModal(modalTypesId.BUY_COLLECTIBLE, { offer, collectible });
   }, []);
 
-  const onClickRent = useCallback((item) => {
-    console.log('RENT: ', item);
+  const onClickRent = useCallback(({ offer, collectible }) => {
+    openModal(modalTypesId.RENT_COLLECTIBLE, { offer, collectible });
   }, []);
 
   return (

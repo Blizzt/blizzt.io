@@ -1,6 +1,6 @@
 
 // Dependencies
-import React, { useMemo, useRef } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import NumberFormat from 'react-number-format';
@@ -29,14 +29,16 @@ import { Container } from '@styled-components/modals';
 
 // Hooks
 import useFormValidation from '@hooks/useFormValidation';
+import useAllowance from '@hooks/useAllowance';
 
 // Operations
 import NFT from '@contracts/operations/NFT';
 
 function BuyCollectibleModal({ closeModal, data: { offer, collectible } }) {
+  console.log({ offer, collectible });
   // Hooks
   const actionButtonRef = useRef(null);
-
+  const allowedButtonRef = useRef(null);
   const { chainId } = useWeb3React();
 
   const formik = useFormik({
@@ -61,6 +63,7 @@ function BuyCollectibleModal({ closeModal, data: { offer, collectible } }) {
       });
     }
   });
+  const { allowed, approve } = useAllowance(offer.currency.id, offer.price, formik.values.quantity);
 
   const currentTransaction = useMemo(() => {
     return parseFloat((offer.price * formik.values.quantity).toString());
@@ -133,6 +136,20 @@ function BuyCollectibleModal({ closeModal, data: { offer, collectible } }) {
 				)}
 
 				<Actions>
+					{!allowed && (
+						<MainButton
+							ref={allowedButtonRef}
+							type={buttonTypesId.PRIMARY}
+							caption={'Approve Currency'}
+							onClick={(() => {
+							  allowedButtonRef.current.changeToLoading('Please wait...');
+							  approve().then(() => {
+							    allowedButtonRef.current.changeToComplete('Approved');
+							  });
+							})}
+						/>
+					)}
+
 					<MainButton
 						ref={actionButtonRef}
 						type={isValidForm ? buttonTypesId.PRIMARY : buttonTypesId.DISABLED}

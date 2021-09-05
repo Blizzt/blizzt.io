@@ -68,39 +68,12 @@ const NFT = {
 
         const isEthereum = currencyTypesData[offer.currency.id].code === currencyTypesData[currencyTypesId.ETH].code;
 
-        console.log({ isEthereum });
-
-        if (!isEthereum) {
-          const {
-            methods: {
-              allowance,
-              approve
-            }
-          } = new web3.eth.Contract(IERC20, currencyTypesData[offer.currency.id].code);
-
-          const allowedAmountFx = await allowance(window.ethereum.selectedAddress, Addresses[chainId].NFTMarketplace);
-          console.log({ allowedAmountFx });
-
-          const allowedAmount = await allowedAmountFx.call({
-            from: window.ethereum.selectedAddress
-          });
-
-          console.log({ allowedAmount });
-
-          if (web3.utils.toWei(price.toString()) > allowedAmount) {
-            const approveFx = await approve(Addresses[chainId].NFTMarketplace, web3.utils.toWei(price.toString()));
-            const tx = approveFx.send({
-              from: window.ethereum.selectedAddress
-            });
-
-            console.log(tx);
-          }
-        }
-
         const tx = await buyItem.send({
           from: window.ethereum.selectedAddress,
-          value: isEthereum ? web3.utils.toWei(price.toString()) : 0
+          value: isEthereum ? web3.utils.toWei((price * quantity).toString()) : 0
         });
+
+        console.log({ tx });
 
         const { networkStatus: buyNetworkStatus } = await API.query({
           query: BUY_NFT,
@@ -109,6 +82,8 @@ const NFT = {
             amount: Number(quantity)
           }
         });
+
+        console.log({ buyNetworkStatus });
 
         if (buyNetworkStatus === NetworkStatus.error) {
           /* Critical error: You have made the purchase but it has not been transacted.
